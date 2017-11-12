@@ -31,7 +31,7 @@ int rep=1;        //  Repitition
 double asp=1;     //  Aspect ratio
 int fov = 55; // Field of View
 double dim=10;   //  Size of world
-int    box=1;    //  Draw sky
+int    box=0;    //  Draw sky
 int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
 // Light values
@@ -158,6 +158,184 @@ glEnd();
 glPopMatrix();
 glDisable(GL_TEXTURE_2D);
 }
+
+/*
+ *  Draw a cube
+ *     at (x,y,z)
+ *     dimentions (dx,dy,dz)
+ *     rotated th about the y axis
+ *     wiht texture # tex
+ */
+static void cube2(double x,double y,double z,
+  double dx,double dy,double dz,
+  double th,
+  int tex)
+{
+    //  Set specular color to white
+    float white[] = {1,1,1,1};
+    float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+    //  Save transformation
+    glPushMatrix();
+    //  Offset, scale and rotate
+    glTranslated(x,y,z);
+    glRotated(th,0,1,0);
+    glScaled(dx,dy,dz);
+    //  Enable textures
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+    glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,texture[tex]);
+    //  Front
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0, 1);
+    glTexCoord2f(0,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+1, +1, +1);
+    glEnd();
+    //  Back
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0,-1);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+0, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +1);
+    glEnd();
+    //  Right
+    
+    glBegin(GL_QUADS);
+    glNormal3f(+1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +0);
+    glEnd();
+    //  Left
+
+    glBegin(GL_QUADS);
+    glNormal3f(-1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1 ,+0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +1);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +1);
+    glEnd();
+    //  Top
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0,+1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+1, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +1, +1);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +0);
+    glEnd();
+    //  Bottom
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0,-1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1, +0, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +0, +0);
+    glEnd();
+    //  Undo transformations and textures
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
+
+/*
+ *  Draw a table side
+ *     at (x,y,z)
+ *     dimentions (dx,dy,dz)
+ *     rotated th about the y axis
+ *     wiht texture # tex
+ */
+static void tableSide(double x,double y,double z,
+  double dx,double dy,double dz,
+  double th, double offset,
+  int tex)
+{
+    //  Set specular color to white
+    float white[] = {1,1,1,1};
+    float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+    //  Save transformation
+    glPushMatrix();
+    //  Offset, scale and rotate
+    glTranslated(x,y,z);
+    glRotated(th,0,1,0);
+    glScaled(dx,dy,dz);
+    //  Enable textures
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+    glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,texture[tex]);
+    //  Front
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0, 1);
+    glTexCoord2f(0,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0 + offset);
+    glTexCoord2f(0,1); glVertex3f(+1, +1, +1 - offset);
+    glEnd();
+    //  Back
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0,-1);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+0, +1, +0 + offset);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +1 - offset);
+    glEnd();
+    //  Right
+    
+    glBegin(GL_QUADS);
+    glNormal3f(+1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0 + offset);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +0 + offset);
+    glEnd();
+    //  Left
+
+    glBegin(GL_QUADS);
+    glNormal3f(-1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1 ,+0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +1 - offset);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +1 - offset);
+    glEnd();
+    //  Top
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0,+1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+1, +1 - offset);
+    glTexCoord2f(1,0); glVertex3f(+1, +1, +1 - offset);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +0 + offset);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +0 + offset);
+    glEnd();
+    //  Bottom
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0,-1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1, +0, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +0, +0);
+    glEnd();
+    //  Undo transformations and textures
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
+
+
 
 /*
  *  Draw a stud
@@ -560,7 +738,35 @@ void basicTree(double x,double z,
 }
 
 
+/*
+* Draw Picnic Table
+* at (x, y ,Y)
+*
+*/
+void picnicTable(double x,double y,double z,double h)
+{
+  tableSide(x, y, z, 0.5, h, 4, 0, 0.15, 0);
+  tableSide(x + 10, y, z, 0.5, h, 4, 0, 0.15, 0);
 
+  // Top surface
+  cube2(x - 0.5 ,h ,z + 0.1, 11.5, 0.2, 0.8, 0 ,1);
+  cube2(x - 0.5 ,h ,z + 1.1, 11.5, 0.2, 0.8, 0 ,1);
+  cube2(x - 0.5 ,h ,z + 2.1, 11.5, 0.2, 0.8, 0 ,1);
+  cube2(x - 0.5 ,h ,z + 3.1, 11.5, 0.2, 0.8, 0 ,1);
+
+  // Seats support bars
+  cube2(x + 0.5, y + 0.2 ,z - 2.5, 0.1, h/2, 8.9, 0, 1);
+  cube2(x + 9.99, y + 0.2 ,z - 2.5, 0.1, h/2, 8.9, 0, 1);
+
+  // Front seats
+  cube2(x - 0.5 ,h/2 + 0.1 ,z + -1.5, 11.5, 0.2, 0.8, 0 ,1);
+  cube2(x - 0.5 ,h/2 + 0.1 ,z + -2.5, 11.5, 0.2, 0.8, 0 ,1);
+
+
+  // Back seats
+  cube2(x - 0.5 ,h/2 + 0.1 ,z +4.5, 11.5, 0.2, 0.8, 0 ,1);
+  cube2(x - 0.5 ,h/2 + 0.1 ,z +5.5, 11.5, 0.2, 0.8, 0 ,1);
+}
 
 
 
@@ -589,7 +795,7 @@ static void ball(double x,double y,double z,double r)
 static void Sky(double D)
 {
 
-  printf("D = %f\n", D);
+  //printf("D = %f\n", D);
   
   double offset = 2.0;
    glColor3f(1,1,1);
@@ -710,7 +916,7 @@ void display()
       float Diffuse[]   = {0.01*diffuse ,0.01*diffuse ,0.01*diffuse ,1.0};
       float Specular[]  = {0.01*specular,0.01*specular,0.01*specular,1.0};
       //  Light direction
-      float Position[]  = {5*Cos(zh),ylight,5*Sin(zh),1};
+      float Position[]  = {12*Cos(zh),ylight,12*Sin(zh),1};
       //  Draw light position as ball (still no lighting here)
       glColor3f(1,1,1);
       ball(Position[0],Position[1],Position[2] , 0.1);
@@ -734,7 +940,8 @@ void display()
    //  Draw scene
    //cube(0,0,0 , 0.5,0.5,0.5 , 0);
       //  Draw scene
-      cube(0,-10*dim,0 ,3,0.25,4, 0 ,3);
+      picnicTable(1,0,1,2);
+      //cube(0,-10*dim,0 ,3,0.25,4, 0 ,3);
       //grass();
       //basicTree(-1, 1,  0.5,0.5,0.5);
       //basicTree(1, -1,  0.5,0.5,0.5);
@@ -937,6 +1144,10 @@ void key(unsigned char ch,int x,int y)
     rep++;
   else if (ch=='-' && rep>1)
     rep--;
+   else if (ch=='p' && box == 1)
+    box = 0;
+   else if (ch=='p' && box == 0)
+    box = 1;
   //  Translate shininess power to value (-1 => 0)
   shiny = shininess<0 ? 0 : pow(2.0,shininess);
   //  Reproject
@@ -976,8 +1187,10 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(key);
   glutIdleFunc(idle);
   //  Load textures
-  texture[0] = LoadTexBMP("Masonry_Stone.bmp");
-  texture[1] = LoadTexBMP("ShingleRoof_18dpi.bmp");
+  
+  texture[0] = LoadTexBMP("PlasterBare.bmp");
+  texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
+  /*
   texture[2] = LoadTexBMP("Grass.bmp");
   texture[3] = LoadTexBMP("BarkDecidious.bmp");
   texture[4] = LoadTexBMP("ivy.bmp");
@@ -985,7 +1198,7 @@ int main(int argc,char* argv[])
   texture[6] = LoadTexBMP("WindowsHouseOld.bmp");
   texture[7] = LoadTexBMP("Leaves0017.bmp");
   texture[8] = LoadTexBMP("Leaves0206.bmp");
-
+*/
   //  Load skybox texture
   sky[0] = LoadTexBMP("sky0.bmp");
   sky[1] = LoadTexBMP("sky1.bmp");
