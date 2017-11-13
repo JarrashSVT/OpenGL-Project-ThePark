@@ -45,6 +45,7 @@ int zh        =  90;  // Light azimuth
 float ylight  =   0;  // Elevation of light
 unsigned int texture[9]; // Texture names
 char *text[] = {"Orthogonal","Prespective","FPS"}; 
+int obj;          //  Object display list
 
  double eyeX = 0;
  double eyeY = 0;
@@ -342,13 +343,25 @@ static void tableSide(double x,double y,double z,
  */
 static void stud(float x,float y, float z,
                   double dx,double dy,double dz,
-                  double angle,
+                  double angle, int axes,
                   int tex)
 {
    int th;
    glPushMatrix();
    glTranslatef(x,y,z);
-   glRotated(angle,1,0,0);
+   if(axes == 0) // rotate on the X-axes
+   {
+      glRotated(angle,1,0,0);
+   }
+   else if(axes == 1) // rotate on the Y-axes
+   {
+      glRotated(angle,0,1,0); 
+   }
+   else // rotate on the Z-axes
+   {
+      glRotated(angle,0,0,1);
+   }
+    
    glScaled(dx,dy,dz);
    //  Top
    glBegin(GL_TRIANGLE_FAN);
@@ -737,6 +750,21 @@ void basicTree(double x,double z,
  glDisable(GL_TEXTURE_2D);
 }
 
+void myPoint(x, y, z)
+{
+  //  Save transformation
+  glPushMatrix();
+  //glTranslated(x,y,z);
+  //  Draw 10 pixel yellow points
+  glColor3f(0.255,0.2,0.5);
+  glPointSize(5);
+  glBegin(GL_POINTS);
+
+  glVertex3d(x, y, z);
+  glEnd();
+  //  Undo transformations
+  glPopMatrix();
+}
 
 /*
 * Draw Picnic Table
@@ -768,7 +796,66 @@ void picnicTable(double x,double y,double z,double h)
   cube2(x - 0.5 ,h/2 + 0.1 ,z +5.5, 11.5, 0.2, 0.8, 0 ,1);
 }
 
+/*
+* Drawa grill
+* at (x ,y, z)
+* 
+*/
 
+void grill(double x,double y,double z,
+          double dx,double dy,double dz,
+          double h)
+{
+
+  //stud(x ,y ,z, 1, 0.5, 2, 90, 1);
+  // Grill bar
+  stud(x ,y ,z, 0.1, 0.1, h, -90, 0,  0);
+
+  // Grill box
+  //base
+  cube(x, y + h, z, dx, dy, dz, 0, 0); // dx = 0.9, dy = 0.003, dz = 1.3
+  //myPoint(x , y + h, z + 1.2 );
+  //right
+  cube2(x - dx , y + h, z - dz , // position
+        1.2, 1, dy,  // dimension
+        0, 0);
+  // left
+  cube2(x - dx , y + h, z + dz , // position
+        1.2, 1, dy,  // dimension
+        0, 0);
+  // back
+  cube2(x - dx , y + h, z + dz , // position
+        dz * 2, dx, dy,  // dimension
+        90, 0);
+
+  for (double i = -1.25 ; i < 1.5; i += 0.25)
+  {
+    //printf("===> %f\n", i);
+    if( i == -1.25)
+     {
+      stud(x - dx , y + h + 0.5 ,i + z , 0.05, 0.05, dz * 1.5, 90, 1, 0); // grill right handle
+     } 
+    else if (i == 1.25)
+    {
+      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.5, 90, 1, 0); // grill left handle
+    }
+    else
+    {
+      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.1 , 90, 1, 0); // grill bars
+    }
+    
+  }
+
+  stud(x + (dx * dy)  , y + h + 0.5 ,0 + z - dz,
+       0.05, 0.05, dz * 2 ,
+       180, 2, 0); // grill frony bar
+
+  stud(x - dx + 0.1 , y + h + 0.5 ,0 + z - dz,
+       0.05, 0.05, dz * 2 ,
+       180, 2, 0); // grill back bar
+
+  
+}
 
 /*
  *  Draw a ball
@@ -797,7 +884,7 @@ static void Sky(double D)
 
   //printf("D = %f\n", D);
   
-  double offset = 2.0;
+  //double offset = 2.0;
    glColor3f(1,1,1);
    glEnable(GL_TEXTURE_2D);
    //glTranslatef(0,5,0);
@@ -941,6 +1028,12 @@ void display()
    //cube(0,0,0 , 0.5,0.5,0.5 , 0);
       //  Draw scene
       picnicTable(1,0,1,2);
+    //  myPoint(1,1,1);
+      grill(-3 ,0 ,-3,
+            0.9, 0.003, 1.3,
+            2.75);
+     // glCallList(obj);
+
       //cube(0,-10*dim,0 ,3,0.25,4, 0 ,3);
       //grass();
       //basicTree(-1, 1,  0.5,0.5,0.5);
@@ -1187,7 +1280,7 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(key);
   glutIdleFunc(idle);
   //  Load textures
-  
+  //argv[0] = "bunny.obj";
   texture[0] = LoadTexBMP("PlasterBare.bmp");
   texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
   /*
@@ -1211,7 +1304,8 @@ int main(int argc,char* argv[])
   park[4] = LoadTexBMP("negz.bmp");
   park[5] = LoadTexBMP("negy.bmp");
 
-
+   //  Load object
+   //obj = LoadOBJ(argv[0]);
 
    //  Pass control to GLUT so it can interact with the user
    ErrCheck("init");
