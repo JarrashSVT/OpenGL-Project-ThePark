@@ -30,7 +30,7 @@ int light=1;      //  Lighting
 int rep=1;        //  Repitition
 double asp=1;     //  Aspect ratio
 int fov = 55; // Field of View
-double dim=10;   //  Size of world
+double dim=15;   //  Size of world
 int    box=0;    //  Draw sky
 int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
@@ -183,6 +183,87 @@ static void cube2(double x,double y,double z,
     //  Offset, scale and rotate
     glTranslated(x,y,z);
     glRotated(th,0,1,0);
+    glScaled(dx,dy,dz);
+    //  Enable textures
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+    glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,texture[tex]);
+    //  Front
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0, 1);
+    glTexCoord2f(0,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+1, +1, +1);
+    glEnd();
+    //  Back
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0, 0,-1);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+0, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +1);
+    glEnd();
+    //  Right
+    
+    glBegin(GL_QUADS);
+    glNormal3f(+1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +0);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +0);
+    glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +1, +0);
+    glEnd();
+    //  Left
+
+    glBegin(GL_QUADS);
+    glNormal3f(-1, 0, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1 ,+0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +1);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +1);
+    glEnd();
+    //  Top
+
+    glBegin(GL_QUADS);
+    glNormal3f( 0,+1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0 ,+1, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +1, +1);
+    glTexCoord2f(1,1); glVertex3f(+1 ,+1, +0);
+    glTexCoord2f(0,1); glVertex3f(+0 ,+1, +0);
+    glEnd();
+    //  Bottom
+    
+    glBegin(GL_QUADS);
+    glNormal3f( 0,-1, 0);
+    glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
+    glTexCoord2f(1,0); glVertex3f(+1, +0, +1);
+    glTexCoord2f(1,1); glVertex3f(+1, +0, +0);
+    glTexCoord2f(0,1); glVertex3f(+0, +0, +0);
+    glEnd();
+    //  Undo transformations and textures
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
+
+static void cube3(double x,double y,double z,
+  double dx,double dy,double dz,
+  double th,
+  int tex)
+{
+    //  Set specular color to white
+    float white[] = {1,1,1,1};
+    float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
+    //  Save transformation
+    glPushMatrix();
+    //  Offset, scale and rotate
+    glTranslated(x,y,z);
+    glRotated(th,0,0,1);
     glScaled(dx,dy,dz);
     //  Enable textures
     glEnable(GL_TEXTURE_2D);
@@ -857,6 +938,145 @@ void grill(double x,double y,double z,
   
 }
 
+void pillar(double x,double y,double z,
+          double dx,double dy,double dz)
+{
+  //pillars
+  glColor3f(1,0,0);
+  stud(x ,y ,z, dx, dy, dz, -90, 0,  0);
+  glColor3f(0,0,1);
+  for (double i = 1.5 ; i < 6; i += 2)
+  {
+    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
+    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
+    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
+  }
+}
+
+void roof(double x,double y,double z,
+          double dx,double dy,double dz,
+          double d)
+{
+  double hight = dz;
+   //  Save transformation
+  glPushMatrix();
+  glColor3f(0,1,0);
+  glBegin(GL_TRIANGLES);
+
+  glVertex3f(x,hight, z);
+  glVertex3f(x + d ,hight, z);
+  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  
+  glVertex3f(x,hight, z);
+  glVertex3f(x  ,hight, z + d);
+  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  
+  glVertex3f(x,hight, z + d);
+  glVertex3f(x + d ,hight, z + d);
+  glVertex3f(x + d/2,hight+d/4, z+d/2);
+
+  glVertex3f(x + d,hight, z);
+  glVertex3f(x + d ,hight, z + d);
+  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  glEnd();
+  //  Undo transformations
+  glPopMatrix();
+}
+
+void playground_floor(double x,double y,double z,
+          
+          double d)
+{
+
+  double hight = dz*3.75;
+
+  cube2(x,hight,z,    d, 0.25, d, 0,10);
+}
+
+
+void barrier(double x,double y,double z,
+             double d, double angle, int axis)
+{
+  double hight = y + d/1.25;
+
+  glColor3f(0,0,1);
+  // horizantal bars
+  stud(x,hight,z, 0.1,0.1,d, angle,1,0);
+  stud(x,hight - 1,z, 0.1,0.1,d, angle,1,0);
+
+  //vertical bars
+  for (double i = 1 ; i < d; i += 1)
+  {
+    if(axis == 0)
+    {
+    stud(x + i ,hight - 1,z ,   0.1,0.1, 1, -90,0, 0);
+    }
+    else{
+
+      stud(x ,hight - 1,z - i,   0.1,0.1, 1, -90,0, 0);
+    }
+    
+  }
+}
+
+void slide(double x,double y,double z,
+          double d)
+{
+   double hight = dz*3.9;
+
+   cube3(x+d,hight,z-d+1.5,    d, 0.25, d-3, -40,10);
+}
+
+
+/*
+* (x, y, z) location
+* (dx, dy, dz) pillar size
+* d = distance beterrn pillars
+*
+*/
+
+void playground(double x,double y,double z,
+          double dx,double dy,double dz,
+          double d)
+{
+  
+  //pillars
+  // inbetween
+  pillar(x,     y, z,      dx,dy,dz);
+  pillar(x + d, y, z,      dx,dy,dz);
+  barrier(x,y,z, d,90,0);
+
+  // with roof
+  pillar(x + d, y, z + d,  dx,dy,dz);
+  pillar(x    , y, z + d,  dx,dy,dz);
+
+  // with floor
+  pillar(x + d, y, z - d,  dx,dy,dz);
+  pillar(x    , y, z - d,  dx,dy,dz);
+  barrier(x,y,z, d,180,1);
+
+  // cylinderical stairs
+  glColor3f(0,0,1);
+  stud(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,0);
+  glColor3f(1,0,0);
+  stud(x+4.75,y,z - d - 1,   1.3,1.3,3.25,   -90,0,0);
+  glColor3f(1,1,0);
+  stud(x+2.5,y,z - d - 2,   1.3,1.3,2.5,   -90,0,0);
+  glColor3f(0,1,0);
+  stud(x+4.25,y,z - d - 3,   1.3,1.3,1.5,   -90,0,0);
+  glColor3f(0,0,1);
+  stud(x+2.5,y,z - d - 4,   1.3,1.3,0.5,   -90,0,0);
+  // roof
+
+  roof(x,y,z      ,dx,dy,dz,    d);
+
+  playground_floor(x,y,z - d,d);
+
+
+  //silde
+  slide(x,y,z,d);
+  
+}
 /*
  *  Draw a ball
  *     at (x,y,z)
@@ -1027,13 +1247,19 @@ void display()
    //  Draw scene
    //cube(0,0,0 , 0.5,0.5,0.5 , 0);
       //  Draw scene
+      // **** Project *****
+      /*
       picnicTable(1,0,1,2);
-    //  myPoint(1,1,1);
+    
       grill(-3 ,0 ,-3,
             0.9, 0.003, 1.3,
             2.75);
-     // glCallList(obj);
+    */
 
+    playground(0,0,-0,    0.5,0.5,6, 7);
+      // **** Project *****       
+     // glCallList(obj);
+//  myPoint(1,1,1);
       //cube(0,-10*dim,0 ,3,0.25,4, 0 ,3);
       //grass();
       //basicTree(-1, 1,  0.5,0.5,0.5);
