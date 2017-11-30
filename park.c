@@ -1,7 +1,7 @@
 /*
- *  Textures and Lighting
+ *  \
  *
- *  Demonstrates using lighting and textures.
+ *  
  *
  *  Key bindings:
  *  l          Toggle lighting on/off
@@ -21,7 +21,7 @@
  */
 #include "CSCIx229.h"
 int mode=0;       //  Texture mode
-int displayMode = 0; //  What to display
+int displayMode = 1; //  What to display
 int ntex=0;       //  Cube faces
 int axes=1;       //  Display axes
 int th=0;         //  Azimuth of view angle
@@ -60,6 +60,7 @@ double atX = 0;
 double atY = 0;
 double atZ = 0;
 
+double cameraHight;
 int angle = 325;
 float fraction = 1.25f;
 
@@ -158,9 +159,8 @@ glEnable(GL_TEXTURE_2D);
 glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
 glColor3f(1,1,1);
 glBindTexture(GL_TEXTURE_2D,texture[tex]);
+
 //  Front
-//glColor3f(1,0,0);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[1]);
 glBegin(GL_QUADS);
 glNormal3f( 0, 0, 1);
 glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
@@ -168,9 +168,8 @@ glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
 glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
 glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
 glEnd();
+
 //  Back
-//glColor3f(0,0,1);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[2]);
 glBegin(GL_QUADS);
 glNormal3f( 0, 0,-1);
 glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
@@ -178,9 +177,8 @@ glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
 glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
 glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
 glEnd();
+
 //  Right
-//glColor3f(1,1,0);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[3]);
 glBegin(GL_QUADS);
 glNormal3f(+1, 0, 0);
 glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
@@ -188,9 +186,8 @@ glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
 glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
 glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
 glEnd();
+
 //  Left
-//glColor3f(0,1,0);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[4]);
 glBegin(GL_QUADS);
 glNormal3f(-1, 0, 0);
 glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
@@ -198,9 +195,8 @@ glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
 glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
 glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
 glEnd();
+
 //  Top
-//glColor3f(0,1,1);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[5]);
 glBegin(GL_QUADS);
 glNormal3f( 0,+1, 0);
 glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
@@ -208,9 +204,9 @@ glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
 glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
 glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
 glEnd();
+
 //  Bottom
-//glColor3f(1,0,1);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[6]);
+
 glBegin(GL_QUADS);
 glNormal3f( 0,-1, 0);
 glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
@@ -252,8 +248,8 @@ static void cube2(double x,double y,double z,
     glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
     glColor3f(1,1,1);
     glBindTexture(GL_TEXTURE_2D,texture[tex]);
+    
     //  Front
-
     glBegin(GL_QUADS);
     glNormal3f( 0, 0, 1);
     glTexCoord2f(0,0); glVertex3f(+1, +0, +1);
@@ -261,8 +257,8 @@ static void cube2(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
     glTexCoord2f(0,1); glVertex3f(+1, +1, +1);
     glEnd();
-    //  Back
     
+    //  Back
     glBegin(GL_QUADS);
     glNormal3f( 0, 0,-1);
     glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
@@ -270,8 +266,8 @@ static void cube2(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+0, +1, +0);
     glTexCoord2f(0,1); glVertex3f(+0, +1, +1);
     glEnd();
+   
     //  Right
-    
     glBegin(GL_QUADS);
     glNormal3f(+1, 0, 0);
     glTexCoord2f(0,0); glVertex3f(+0, +0, +0);
@@ -279,8 +275,8 @@ static void cube2(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
     glTexCoord2f(0,1); glVertex3f(+0, +1, +0);
     glEnd();
+    
     //  Left
-
     glBegin(GL_QUADS);
     glNormal3f(-1, 0, 0);
     glTexCoord2f(0,0); glVertex3f(+0 ,+0, +1);
@@ -289,7 +285,6 @@ static void cube2(double x,double y,double z,
     glTexCoord2f(0,1); glVertex3f(+0 ,+1, +1);
     glEnd();
     //  Top
-
     glBegin(GL_QUADS);
     glNormal3f( 0,+1, 0);
     glTexCoord2f(0,0); glVertex3f(+0 ,+1, +1);
@@ -297,8 +292,8 @@ static void cube2(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1 ,+1, +0);
     glTexCoord2f(0,1); glVertex3f(+0 ,+1, +0);
     glEnd();
-    //  Bottom
     
+    //  Bottom
     glBegin(GL_QUADS);
     glNormal3f( 0,-1, 0);
     glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
@@ -311,6 +306,13 @@ static void cube2(double x,double y,double z,
     glDisable(GL_TEXTURE_2D);
 }
 
+/*
+ *  Draw a cube
+ *     at (x,y,z)
+ *     dimentions (dx,dy,dz)
+ *     rotated th about the Z axis
+ *     wiht texture # tex
+ */
 static void cube3(double x,double y,double z,
   double dx,double dy,double dz,
   double th,
@@ -333,8 +335,8 @@ static void cube3(double x,double y,double z,
     glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
     glColor3f(1,1,1);
     glBindTexture(GL_TEXTURE_2D,texture[tex]);
+    
     //  Front
-
     glBegin(GL_QUADS);
     glNormal3f( 0, 0, 1);
     glTexCoord2f(0,0); glVertex3f(+1, +0, +1);
@@ -351,8 +353,8 @@ static void cube3(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+0, +1, +0);
     glTexCoord2f(0,1); glVertex3f(+0, +1, +1);
     glEnd();
-    //  Right
     
+    //  Right
     glBegin(GL_QUADS);
     glNormal3f(+1, 0, 0);
     glTexCoord2f(0,0); glVertex3f(+0, +0, +0);
@@ -360,8 +362,8 @@ static void cube3(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1, +1, +0);
     glTexCoord2f(0,1); glVertex3f(+0, +1, +0);
     glEnd();
+    
     //  Left
-
     glBegin(GL_QUADS);
     glNormal3f(-1, 0, 0);
     glTexCoord2f(0,0); glVertex3f(+0 ,+0, +1);
@@ -369,8 +371,8 @@ static void cube3(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1 ,+1, +1);
     glTexCoord2f(0,1); glVertex3f(+0 ,+1, +1);
     glEnd();
+    
     //  Top
-
     glBegin(GL_QUADS);
     glNormal3f( 0,+1, 0);
     glTexCoord2f(0,0); glVertex3f(+0 ,+1, +1);
@@ -378,8 +380,8 @@ static void cube3(double x,double y,double z,
     glTexCoord2f(1,1); glVertex3f(+1 ,+1, +0);
     glTexCoord2f(0,1); glVertex3f(+0 ,+1, +0);
     glEnd();
-    //  Bottom
     
+    //  Bottom
     glBegin(GL_QUADS);
     glNormal3f( 0,-1, 0);
     glTexCoord2f(0,0); glVertex3f(+0, +0, +1);
@@ -480,12 +482,39 @@ static void tableSide(double x,double y,double z,
     glDisable(GL_TEXTURE_2D);
 }
 
-
+/*
+ *  Draw a cylinder
+ */
+static void cylinder2(float x,float y, float z, float radius, float height)
+{
+   int th;
+   glPushMatrix();
+   glTranslatef(x,y,z);
+   glRotated(-90,1,0,0);
+   glScaled(radius,radius,height);
+   //  Top
+   glBegin(GL_TRIANGLE_FAN);
+   glNormal3f(0,0,1);
+   glVertex3f(0,0,1);
+   for (th=0;th<=360;th+=15)
+      glVertex3f(Cos(th),Sin(th),1);
+   glEnd();
+   //  Sides
+   glBegin(GL_QUAD_STRIP);
+   for (th=0;th<=360;th+=15)
+   {
+      glNormal3f(Cos(th),Sin(th),0);
+      glVertex3f(Cos(th),Sin(th),1);
+      glVertex3f(Cos(th),Sin(th),0);
+   }
+   glEnd();
+   glPopMatrix();
+}
 
 /*
- *  Draw a stud
+ *  Draw a cylinder
  */
-static void stud(float x,float y, float z,
+static void cylinder(float x,float y, float z,
                   double dx,double dy,double dz,
                   double angle, int axes,
                   int tex)
@@ -508,7 +537,14 @@ static void stud(float x,float y, float z,
     
    glScaled(dx,dy,dz);
 
-   
+   if(tex != -1)
+   {
+    //  Enable textures
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+    glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,texture[tex]);
+   }
    //  Top
    glBegin(GL_TRIANGLE_FAN);
    glNormal3f(0,0,1);
@@ -520,267 +556,60 @@ static void stud(float x,float y, float z,
    glBegin(GL_QUAD_STRIP);
    for (th=0;th<=360;th+=15)
    {
+      float tc = (th / (float)(2 * PI));
       glNormal3f(Cos(th),Sin(th),0);
+      glTexCoord2f(tc, 0.0);
       glVertex3f(Cos(th),Sin(th),1);
+      glTexCoord2f(tc, 1.0);
       glVertex3f(Cos(th),Sin(th),0);
    }
    glEnd();
    glPopMatrix();
+   if(tex != -1)
+   {
+     glDisable(GL_TEXTURE_2D);
+   }
 }
 
-
-
-void houseWithRoof(double x,double y,double z,
-  double length, double width, double height,
-  double th, double roofHeight)
+void drawCone(float x,float y, float z, float radius, float height)
 {
-
-//  Set specular color to white
-float white[] = {1,1,1,1};
-float black[] = {0,0,0,1};
-glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
-glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);  
-//  Save transformation
-glPushMatrix();
-//  Offset
-glTranslated(x,y,z);
-glRotated(th,0,1,0);
-
-glScaled(length,width,height);
-//  Enable textures
-glEnable(GL_TEXTURE_2D);
-glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
-glColor3f(1,1,1);
-glBindTexture(GL_TEXTURE_2D,texture[0]);
-//  House
-//  Enable Polygon Offset
-glEnable(GL_POLYGON_OFFSET_FILL);
-glPolygonOffset(1,1);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[1]);
-glBegin(GL_QUADS);
-
-
-//  Front
-//glColor3f(1,0,0);
-
-//Normal Vector
-glNormal3f(1, 0, 0);
-
-glTexCoord2f(0,0);glVertex3f(1, 0, 0);
-glTexCoord2f(0,1);glVertex3f(1, 1, 0);
-glTexCoord2f(1,1);glVertex3f(1, 1, 1);
-glTexCoord2f(1,0);glVertex3f(1, 0, 1);
-
-glEnd();
-
-//  Disable polygon offset
-glDisable(GL_POLYGON_OFFSET_FILL);
-//glDisable(GL_TEXTURE_2D);
-glBindTexture(GL_TEXTURE_2D,texture[5]);
-glBegin(GL_QUADS);
-//door
-glColor3f(1,1,1);
-
-//Normal Vector
-glNormal3f(1, 0, 0);
-
-glTexCoord2f(0,0);glVertex3f(1, 0, 0.1);
-glTexCoord2f(0,1);glVertex3f(1, 0.6, 0.1);
-glTexCoord2f(1,1);glVertex3f(1, 0.6, 0.3);
-glTexCoord2f(1,0);glVertex3f(1, 0, 0.3);
-glEnd();
-
-// window
-glBindTexture(GL_TEXTURE_2D,texture[6]);
-glBegin(GL_QUADS);
-//glColor3f( 0.74902 , 0.847059 , 0.847059); // light blue
-glColor3f(1,1,1);
-//Normal Vector
-glNormal3f(1, 0, 0);
-glTexCoord2f(0,0);glVertex3f(1, 0.3, 0.5);
-glTexCoord2f(0,1);glVertex3f(1, 0.6, 0.5);
-glTexCoord2f(1,1);glVertex3f(1, 0.6, 0.7);
-glTexCoord2f(1,0);glVertex3f(1, 0.3, 0.7);
-glEnd();
-
-glBindTexture(GL_TEXTURE_2D,texture[0]);
-glBegin(GL_QUADS);
-//if (ntex) glBindTexture(GL_TEXTURE_2D,texture[1]);
-//Back
-glColor3f(1,1,1);
-//Normal Vector
-glNormal3f(-1, 0, 0);
-
-glTexCoord2f(0,0);glVertex3f(0, 0, 0);
-glTexCoord2f(0,1);glVertex3f(0, 1, 0);
-glTexCoord2f(1,1);glVertex3f(0, 1, 1);
-glTexCoord2f(1,0);glVertex3f(0, 0, 1);
-
-
-// left
-//glColor3f(1,0,0);
-//Normal Vector
-glNormal3f(0 , 0, 1);
-
-glTexCoord2f(1,0);glVertex3f(0, 0, 1);
-glTexCoord2f(0,0);glVertex3f(1, 0, 1);
-glTexCoord2f(0,1);glVertex3f(1, 1, 1);
-glTexCoord2f(1,1);glVertex3f(0, 1, 1);
-
-
-
-
-// right
-//glColor3f(1,0,0);
-//Normal Vector
-glNormal3f(0, 0, -1);
-
-
-
-glTexCoord2f(1,0);glVertex3f(0, 0, 0);
-glTexCoord2f(0,0);glVertex3f(1, 0, 0);
-glTexCoord2f(0,1);glVertex3f(1, 1, 0);
-glTexCoord2f(1,1);glVertex3f(0, 1, 0);
-glEnd();
-
-
-
-
-if (roofHeight == 0)
-{
-
-
-  //top
-  glBegin(GL_QUADS);
-  glColor3f( 0.647059 , 0.164706 , 0.164706); // brown
-
-  glNormal3f(0, 1, 0);
-  glVertex3f(0, 1, 0);
-  //glColor3f(1,0,1);
-  glVertex3f(0, 1, 1);
-  //glColor3f(0,1,1);
-  glVertex3f(1, 1, 1);
-  //glColor3f(0,1,0);
-  glVertex3f(1, 1, 0);
-  glEnd();
-
+    glPushMatrix();
+    glTranslatef(x,y,z);
+    glRotated(-90,1,0,0);
+   // glScaled(radius,radius,height);
+    // draw the upper part of the cone
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0, 0, height);
+    for (int angle = 0; angle < 360; angle++) 
+    {
+        glVertex3f(sin(angle) * radius, cos(angle) * radius, 0);
+    }
+    glEnd();
+    glPopMatrix();  
 }
 
-else
-{
-  glBindTexture(GL_TEXTURE_2D,texture[1]);
-  glBegin(GL_TRIANGLES);
+void drawKetchup(double x,double y,double z,
+    //double length, double width, double height,
+    double th)
+ {
+    //  Save transformation
+    glPushMatrix();
+    //  Offset
+    glTranslated(x,y,z);
+    //glRotated(-90,1,0,0);
+    glRotated(th,1,0,0);
+    //glScaled(length,width,height);
+   // draw_cylinder(0.25, 1.0, 1, 0, 0,x, y, z, 1,1,1);
 
-  glColor3f( 0.647059 , 0.164706 , 0.164706); // brown
+   cylinder2(x, y, z, 0.25, 1);
+   cylinder2(x, y+1 , z, .15, 0.1);
+   drawCone(x, y+1.1, z, 0.075, 0.25);
 
-  //right triangle in the roof
-  glNormal3f(0, 0, -0.5);
+    //  Undo transformations
+    glPopMatrix();
 
-  glTexCoord2f(1,0);glVertex3f(0, 1, 0);
-  glTexCoord2f(1,1);glVertex3f(0.5, roofHeight, 0);
-  glTexCoord2f(0,0);glVertex3f(1, 1 ,0);
+ }
 
-  
-
-  // left triangle in the roof
-  glNormal3f(0, 0, 0.5);
-
-  glTexCoord2f(1,0);glVertex3f(1, 1, 1);
-  glTexCoord2f(1,1);glVertex3f(0.5, roofHeight, 1);
-  glTexCoord2f(0,0);glVertex3f(0, 1 ,1);
-
-  glEnd();
-
-  glBegin(GL_QUADS);
-  glColor3f( 0.647059 , 0.164706 , 0.164706); // brown
-  
-  // back roof
-  glNormal3f(-0.5, 0.5, 0);
-
-  glTexCoord2f(1,0);glVertex3f(0, 1, 1);
-  glTexCoord2f(1,1);glVertex3f(0.5, roofHeight, 1);
-  glTexCoord2f(0,1);glVertex3f(0.5, roofHeight, 0);
-  glTexCoord2f(0,0);glVertex3f(0, 1, 0);
-
-  glColor3f( 0.647059 , 0.164706 , 0.164706); // brown
-  
-  // front roof
-  glNormal3f(0.5, -0.5, 0);
-
-  glTexCoord2f(1,0);glVertex3f(1, 1, 0);
-  glTexCoord2f(1,1);glVertex3f(0.5, roofHeight, 0);
-  glTexCoord2f(0,1);glVertex3f(0.5, roofHeight, 1);
-  glTexCoord2f(0,0);glVertex3f(1, 1, 1);
-
-  glEnd();
-
-}
-
-  //  Undo transformations
-  glPopMatrix();
-  glDisable(GL_TEXTURE_2D);
-}
-
-
-void grass()
-{
-  //  Set specular color to white
-  float white[] = {1,1,1,1};
-  float black[] = {0,0,0,1};
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
-  //  Save transformation
-  glPushMatrix();
-  //  Enable textures
-glEnable(GL_TEXTURE_2D);
-glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
-glColor3f(1,1,1);
-  //glColor3f(0.560784 , 0.737255 , 0.560784);
-  glBindTexture(GL_TEXTURE_2D,texture[2]);
-  
-  
-   //  Enable Polygon Offset
-
-   glEnable(GL_POLYGON_OFFSET_FILL);
-   glPolygonOffset(1,1);
-   // glTranslated(0, 1.001,0);
-   //glRotated(-90,1,0,0);
-   glScaled(1.75, 1.75, 1.75);
-   glBegin(GL_POLYGON);
-  
-   glNormal3f(0, 1, 0);
-   glTexCoord2f(0,0);glVertex3f(0, 0, 0);
-   glTexCoord2f(10,0);glVertex3f(0, 0, 1);
-   glTexCoord2f(10,10);glVertex3f(1, 0, 1);
-   glTexCoord2f(0,10);glVertex3f(1, 0, 0);
-
-   glNormal3f(0, 1, 0);
-   glTexCoord2f(0,0);glVertex3f(0, 0, 0);
-   glTexCoord2f(10,0);glVertex3f(0, 0, 1);
-   glTexCoord2f(10,10); glVertex3f(-1, 0, 1);
-   glTexCoord2f(0,10);glVertex3f(-1, 0, 0);
-   
-   glNormal3f(0, 1, 0);
-   glTexCoord2f(0,0);glVertex3f(0, 0, 0);
-   glTexCoord2f(10,0);glVertex3f(1, 0, 0);
-   glTexCoord2f(10,10);glVertex3f(1, 0, -1);
-   glTexCoord2f(0,10);glVertex3f(0, 0, -1);
-
-   glNormal3f(0, 1, 0);
-   glTexCoord2f(0,0);glVertex3f(0, 0, 0);
-   glTexCoord2f(10,0);glVertex3f(0, 0, -1);
-   glTexCoord2f(10,10);glVertex3f(-1, 0, -1);
-   glTexCoord2f(0,10);glVertex3f(-1, 0, 0);
-
-   glEnd();
-   //  Disable polygon offset
-   glDisable(GL_POLYGON_OFFSET_FILL);
-   //  Undo transformations
-   glPopMatrix();
-   glDisable(GL_TEXTURE_2D);
-}
 
 void draw_cylinder(GLfloat radius, GLfloat height,
   GLubyte R, GLubyte G,GLubyte B,
@@ -845,80 +674,19 @@ void draw_cylinder(GLfloat radius, GLfloat height,
 
 
 /*
-*  Draw solid tree
-*    at (x,y)
-*    scale (xt,yt,zt)
-*    
-*/
-void basicTree(double x,double z,
-  double xt, double yt, double zt)
-{
-  double y = 0.5;
-  draw_cylinder(0.07, 1.0, 255, 160, 100,x, y, z, xt,yt,zt);
-   //  Save transformation
-  glPushMatrix();
- // glColor3f(  0.137255 , 0.556863 , 0.137255); // ForestGreen
-  glTranslatef(x,y,z);
-  glRotated(-90,1,0,0);
-  glScaled(xt, yt, zt);
-
-    //  Enable textures
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
-  glColor3f(1,1,1);
-  glBindTexture(GL_TEXTURE_2D,texture[4]);
-   
-  float radius = 0.25;
-  float height = 0.25;
-     // draw the upper part of the cone
-  for(int i = 0 ; i < 4 ; i++)
-  {   
-    glBegin(GL_TRIANGLES);
-    
-    for (int angle = 0; angle < 360; angle+=DEF_D) 
-    {
-      glNormal3f(0,0,1);
-      glVertex3f(0, 0, height);
-      glNormal3f(sin(angle) * radius, cos(angle) * radius, -radius);
-      glTexCoord2f(sin(angle) * radius *1000, cos(angle) * radius *1000);
-      glVertex3f(sin(angle) * radius, cos(angle) * radius, 0);
-      //glVertex3f(sin(angle + DEF_D) * radius, cos(angle + DEF_D) * radius, 0);
-
-    }
-    
-    glEnd();
-    glTranslatef(0,0,0.15);
-}
-
-  
- //  Undo transformations
- glPopMatrix();
- glDisable(GL_TEXTURE_2D);
-}
-
-void myPoint(x, y, z)
-{
-  //  Save transformation
-  glPushMatrix();
-  //glTranslated(x,y,z);
-  //  Draw 10 pixel yellow points
-  glColor3f(0.255,0.2,0.5);
-  glPointSize(5);
-  glBegin(GL_POINTS);
-
-  glVertex3d(x, y, z);
-  glEnd();
-  //  Undo transformations
-  glPopMatrix();
-}
-
-/*
 * Draw Picnic Table
 * at (x, y ,Y)
 *
 */
 void picnicTable(double x,double y,double z,double h)
 {
+
+  glColor3f(1,0,0);
+  drawKetchup(x,x + 0.1,x,0);
+
+  glColor3f(1,1,0);
+  drawKetchup(x+0.3,x + 0.1,x,0);
+
   tableSide(x, y, z, 0.5, h, 4, 0, 0.15, 0);
   tableSide(x + 10, y, z, 0.5, h, 4, 0, 0.15, 0);
 
@@ -953,14 +721,14 @@ void grill(double x,double y,double z,
           double h)
 {
 
-  //stud(x ,y ,z, 1, 0.5, 2, 90, 1);
+  
   // Grill bar
-  stud(x ,y ,z, 0.1, 0.1, h, -90, 0,  2);
+  cylinder(x ,y ,z, 0.1, 0.1, h, -90, 0,  2);
 
   // Grill box
   //base
   cube(x, y + h, z, dx, dy, dz, 0, 2); // dx = 0.9, dy = 0.003, dz = 1.3
-  //myPoint(x , y + h, z + 1.2 );
+  
   //right
   cube2(x - dx , y + h, z - dz , // position
         1.2, 1, dy,  // dimension
@@ -979,24 +747,24 @@ void grill(double x,double y,double z,
     //printf("===> %f\n", i);
     if( i == -1.25)
      {
-      stud(x - dx , y + h + 0.5 ,i + z , 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill right handle
+      cylinder(x - dx , y + h + 0.5 ,i + z , 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill right handle
      } 
     else if (i == 1.25)
     {
-      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill left handle
+      cylinder(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill left handle
     }
     else
     {
-      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.1 , 90, 1, 2); // grill bars
+      cylinder(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.1 , 90, 1, 2); // grill bars
     }
     
   }
 
-  stud(x + (dx * dy)  , y + h + 0.5 ,0 + z - dz,
+  cylinder(x + (dx * dy)  , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
        180, 2, 2); // grill frony bar
 
-  stud(x - dx + 0.1 , y + h + 0.5 ,0 + z - dz,
+  cylinder(x - dx + 0.1 , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
        180, 2, 2); // grill back bar
 
@@ -1008,13 +776,13 @@ void pillar(double x,double y,double z,
 {
   //pillars
   glColor3f(1,0,0);
-  stud(x ,y ,z, dx, dy, dz, -90, 0,  0);
+  cylinder(x ,y ,z, dx, dy, dz, -90, 0,  -1);
   glColor3f(0,0,1);
   for (double i = 1.5 ; i < 6; i += 2)
   {
-    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
-    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
-    stud(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  0);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
   }
 }
 
@@ -1023,26 +791,40 @@ void roof(double x,double y,double z,
           double d)
 {
   double hight = dz;
+
+//  Set specular color to white
+  float white[] = {1,1,1,1};
+  float Emission[]  = {0.0,0.0,0.01*emission,1.0};
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
    //  Save transformation
   glPushMatrix();
   glColor3f(0,1,0);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
   glBegin(GL_TRIANGLES);
 
+  glNormal3f(0, -d*d/2, +d*d/4);
   glVertex3f(x,hight, z);
   glVertex3f(x + d ,hight, z);
   glVertex3f(x + d/2,hight+d/4, z+d/2);
   
+  glNormal3f(-d*d/4, d*d/2, 0);
   glVertex3f(x,hight, z);
   glVertex3f(x  ,hight, z + d);
   glVertex3f(x + d/2,hight+d/4, z+d/2);
   
+  glNormal3f(0, +d*d/2, -d*d/4);
   glVertex3f(x,hight, z + d);
   glVertex3f(x + d ,hight, z + d);
   glVertex3f(x + d/2,hight+d/4, z+d/2);
 
+
+  glNormal3f(d*d/4, -d*d/2, 0);
   glVertex3f(x + d,hight, z);
   glVertex3f(x + d ,hight, z + d);
   glVertex3f(x + d/2,hight+d/4, z+d/2);
+  
   glEnd();
   //  Undo transformations
   glPopMatrix();
@@ -1066,19 +848,19 @@ void barrier(double x,double y,double z,
 
   glColor3f(0,0,1);
   // horizantal bars
-  stud(x,hight,z, 0.1,0.1,d, angle,1,0);
-  stud(x,hight - 1,z, 0.1,0.1,d, angle,1,0);
+  cylinder(x,hight,z, 0.1,0.1,d, angle,1,-1);
+  cylinder(x,hight - 1,z, 0.1,0.1,d, angle,1,-1);
 
   //vertical bars
   for (double i = 1 ; i < d; i += 1)
   {
     if(axis == 0)
     {
-    stud(x + i ,hight - 1,z ,   0.1,0.1, 1, -90,0, 0);
+    cylinder(x + i ,hight - 1,z ,   0.1,0.1, 1, -90,0, -1);
     }
     else{
 
-      stud(x ,hight - 1,z - i,   0.1,0.1, 1, -90,0, 0);
+      cylinder(x ,hight - 1,z - i,   0.1,0.1, 1, -90,0, -1);
     }
     
   }
@@ -1122,15 +904,15 @@ void playground(double x,double y,double z,
 
   // cylinderical stairs
   glColor3f(0,0,1);
-  stud(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,0);
+  cylinder(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,-1);
   glColor3f(1,0,0);
-  stud(x+4.75,y,z - d - 1,   1.3,1.3,3.25,   -90,0,0);
+  cylinder(x+4.75,y,z - d - 1,   1.3,1.3,3.25,   -90,0,-1);
   glColor3f(1,1,0);
-  stud(x+2.5,y,z - d - 2,   1.3,1.3,2.5,   -90,0,0);
+  cylinder(x+2.5,y,z - d - 2,   1.3,1.3,2.5,   -90,0,-1);
   glColor3f(0,1,0);
-  stud(x+4.25,y,z - d - 3,   1.3,1.3,1.5,   -90,0,0);
+  cylinder(x+4.25,y,z - d - 3,   1.3,1.3,1.5,   -90,0,-1);
   glColor3f(0,0,1);
-  stud(x+2.5,y,z - d - 4,   1.3,1.3,0.5,   -90,0,0);
+  cylinder(x+2.5,y,z - d - 4,   1.3,1.3,0.5,   -90,0,-1);
   // roof
 
   roof(x,y,z      ,dx,dy,dz,    d);
@@ -1235,10 +1017,7 @@ void display()
 {
    //  Length of axes
    const double len=10.0;
-   //  Eye position
-   //double Ex = -2*dim*Sin(th)*Cos(ph);
-   //double Ey = +2*dim        *Sin(ph);
-   //double Ez = +2*dim*Cos(th)*Cos(ph);
+  
    //  Erase the window and the depth buffer
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
    //  Enable Z-buffering in OpenGL
@@ -1254,6 +1033,7 @@ void display()
            break;
        case 1:
            // Prespective
+           //  Eye position
            eyeX = -2 * dim * Sin(th) * Cos(ph);
            eyeY = 2 * dim * Sin(ph);
            eyeZ = 2 * dim * Cos(th) * Cos(ph);
@@ -1265,18 +1045,19 @@ void display()
        case 2:
                  
            // FPS navigation
-           dx = Sin(angle);
-           dz = Cos(angle);
-           printf("%f ,%f\n ", dx,dz);
-           gluLookAt(eyeX, 1, eyeZ,   eyeX + dx , 1, eyeZ + dz,      0, 1 ,0); 
+           cameraHight = 4;
+           atX = Sin(angle);
+           atZ = Cos(angle);
+           printf("%f ,%f\n ", atX,atZ);
+           gluLookAt(eyeX, cameraHight, eyeZ,   eyeX + atX ,cameraHight, eyeZ + atZ,      0, cameraHight ,0); 
            //gluLookAt(eyeX, 1, eyeZ, eyeX + ex, 1, eyeZ + ez, 0, 1, 0);
            //gluLookAt(eyeX, 1, eyeY, eyeX + ex, eyeY + ey,1, 0,0,1);
 
-          printf("eyeX = %f eyeZ = %f lx = %f lz = %f angle= %d\n",eyeX , eyeZ, dx, dz,  angle);
+          printf("eyeX = %f eyeZ = %f lx = %f lz = %f angle= %d\n",eyeX , eyeZ, atX, atZ,  angle);
            break;
 
    }
-   //gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(ph),0);
+
 
 
   //  Light switch
@@ -1309,46 +1090,38 @@ void display()
    else
       glDisable(GL_LIGHTING);
    //  Draw scene
-   //cube(0,0,0 , 0.5,0.5,0.5 , 0);
-      //  Draw scene
+   
       // **** Project *****
-      
 
-    
-// draw_blast();
   
-        if(fireworks)
-        {
-          int i;
-          //glClear(GL_COLOR_BUFFER_BIT);
-          if (step < 0.9*length) {
-          for (i=0; i<numPoints; i++)
-          yacc[i] -= 0.02 / length; // gravity
-          draw_blast();
-          }
-          step ++;
-          if (step > length) fireworks_initialize();
-        }
+    if(fireworks)
+    {
+      int i;
+      //glClear(GL_COLOR_BUFFER_BIT);
+      if (step < 0.9*length) {
+      for (i=0; i<numPoints; i++)
+      yacc[i] -= 0.02 / length; // gravity
+      draw_blast();
+      }
+      step ++;
+      if (step > length) fireworks_initialize();
+    }
 
-          //  Draw sky
-          if (box) Sky(10*dim);
-          picnicTable(1,0,1,2);
-    
-      grill(-3 ,0 ,-3,
-            0.9, 0.003, 1.3,
-            2.75);    
+    //  Draw sky
+    if (box) Sky(10*dim);
+    picnicTable(1,0,1,2);
+  
+    grill(-3 ,0 ,-3,
+          0.9, 0.003, 1.3,
+          2.75);    
     playground(10,0,-10,    0.5,0.5,6, 7);
+
+
+    
+    
       // **** Project *****       
      // glCallList(obj);
-//  myPoint(1,1,1);
-      //cube(0,-10*dim,0 ,3,0.25,4, 0 ,3);
-      //grass();
-      //basicTree(-1, 1,  0.5,0.5,0.5);
-      //basicTree(1, -1,  0.5,0.5,0.5);
-      //basicTree(-0.5, -1.5,  0.5,0.5,0.5);
-      //houseWithRoof(0,0,0, 7,8,10 , 0, 1.5);
-    
-      //houseWithRoof(-1,0,0, 0.5,0.5,0.8 , 90, 1.5);
+
    //  Draw axes - no lighting from here on
    glDisable(GL_LIGHTING);
    glColor3f(1,1,1);
@@ -1415,17 +1188,35 @@ void special(int key,int x,int y)
 {
    //  Right arrow key - increase angle by 5 degrees
    if (key == GLUT_KEY_RIGHT)
-      th += 5;
+      {
+        if (displayMode == 2)
+        {
+          angle -= 5;  
+        }
+        else
+        {
+          th += 5;
+        }
+   }
    //  Left arrow key - decrease angle by 5 degrees
    else if (key == GLUT_KEY_LEFT)
+   {
+     if (displayMode == 2)
+     {
+      angle += 5;  
+     }
+     else
+     {
       th -= 5;
+     }
+   }
    //  Up arrow key - increase elevation by 5 degrees
    else if (key == GLUT_KEY_UP)
    {
      if (displayMode == 2)
      {
-      eyeX += dx * fraction;
-      eyeZ +=  dz * fraction;  
+      eyeX += atX * fraction;
+      eyeZ +=  atZ * fraction;  
      }
      else
      {
@@ -1434,7 +1225,17 @@ void special(int key,int x,int y)
    }
    //  Down arrow key - decrease elevation by 5 degrees
    else if (key == GLUT_KEY_DOWN)
+   {
+     if (displayMode == 2)
+     {
+      eyeX -= atX * fraction;
+      eyeZ -=  atZ * fraction;  
+     }
+     else
+     {
       ph -= 5;
+     }
+   }
    //  PageUp key - increase dim
    else if (key == GLUT_KEY_PAGE_DOWN)
       dim += 0.1;
@@ -1465,13 +1266,13 @@ void key(unsigned char ch,int x,int y)
     th = ph = 0;
   else if (ch == 'w' || ch == 'W')
   {
-      eyeX += dx * fraction;
-      eyeZ +=  dz * fraction;   
+      eyeX += atX * fraction;
+      eyeZ +=  atZ * fraction;   
   }
   else if (ch == 's' || ch == 'S')
   {
-      eyeX -= dx * fraction;
-      eyeZ -=  dz * fraction;
+      eyeX -= atX * fraction;
+      eyeZ -=  atZ * fraction;
   }
   else if (ch == 'a' || ch == 'A')
   {
@@ -1585,7 +1386,7 @@ int main(int argc,char* argv[])
   //  Request double buffered, true color window with Z buffering at 600x600
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
   glutInitWindowSize(1000,1000);
-  glutCreateWindow("The 'Village' by Mahmoud Aljarrash with Textures and Lighting");
+  glutCreateWindow("The 'Park' by Mahmoud Aljarrash");
   //  Set callbacks
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
