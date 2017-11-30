@@ -34,6 +34,7 @@ double dim=15;   //  Size of world
 int    box=0;    //  Draw sky
 int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
+int fireworks=0; // Fireworks
 // Light values
 int emission  =   0;  // Emission intensity (%)
 int ambient   =  30;  // Ambient intensity (%)
@@ -47,25 +48,87 @@ unsigned int texture[9]; // Texture names
 char *text[] = {"Orthogonal","Prespective","FPS"}; 
 int obj;          //  Object display list
 
- double eyeX = 0;
- double eyeY = 0;
- double eyeZ = 0;
+double eyeX = 0;
+double eyeY = 0;
+double eyeZ = 0;
 
- double dx = 1;
- double dy = 1;
- double dz = 1;
+double dx = 1;
+double dy = 1;
+double dz = 1;
 
- double atX = 0;
- double atY = 0;
- double atZ = 0;
+double atX = 0;
+double atY = 0;
+double atZ = 0;
 
- int angle = 325;
- float fraction = 1.25f;
+int angle = 325;
+float fraction = 1.25f;
 
 
 #define PI 3.1415927
 #define DEF_D 5
+#define MAX_POINTS 5000
 
+int numPoints;
+GLfloat curx, cury,curz;
+GLfloat x[MAX_POINTS], y[MAX_POINTS], z[MAX_POINTS];
+GLfloat xacc[MAX_POINTS], yacc[MAX_POINTS], zacc[MAX_POINTS];
+GLfloat red, green, blue;
+int step; int length;
+
+void fireworks_initialize()
+{ 
+    int j; double temp, temp2,temp3;
+
+  numPoints = drand48()*(MAX_POINTS-1);
+  curx = -0.5 + drand48();
+  cury = 10.0 + drand48();
+  curz = +0.25 + drand48();
+
+  red = 0.5 + 0.5*drand48();
+  green = 0.5 + 0.5*drand48();
+  blue = 0.5 + 0.5*drand48();
+  glPointSize(1.5); 
+  step = 0;
+  length = 700 + 300*drand48();
+
+
+  /* initialize the blast */
+  for (j=0 ; j<numPoints ; j++ ) {
+  x[j] = curx;
+  y[j] = cury;
+  z[j] = curz;
+  temp = drand48()*5;
+  temp2 = drand48()*2.0*M_PI;
+  temp3 = drand48()*M_PI;
+  xacc[j] = (cos(temp2) * sin(temp3) * temp)/length;
+  yacc[j] = (sin(temp2) * sin(temp3) * temp)/length;
+  zacc[j] = (cos(temp3) * temp)/length;
+
+
+}
+
+}
+
+void draw_blast(void)
+{ 
+    glClear(GL_COLOR_BUFFER_BIT);
+    glPushMatrix();
+   // glTranslated(drand48(),drand48(),drand48());
+    int i;
+double glow = (length - step) / (double)length;
+glColor3f(red*glow, green*glow, blue*glow);
+glBegin(GL_POINTS);
+for (i=0;i<numPoints;i++) {
+x[i] += xacc[i];
+y[i] += yacc[i];
+z[i] += zacc[i];
+glVertex3f(x[i], y[i], z[i]);
+}
+glEnd();
+glFlush();
+glPopMatrix();
+//glutSwapBuffers();
+}
 /*
  *  Draw a cube
  *     at (x,y,z)
@@ -444,6 +507,8 @@ static void stud(float x,float y, float z,
    }
     
    glScaled(dx,dy,dz);
+
+   
    //  Top
    glBegin(GL_TRIANGLE_FAN);
    glNormal3f(0,0,1);
@@ -890,50 +955,50 @@ void grill(double x,double y,double z,
 
   //stud(x ,y ,z, 1, 0.5, 2, 90, 1);
   // Grill bar
-  stud(x ,y ,z, 0.1, 0.1, h, -90, 0,  0);
+  stud(x ,y ,z, 0.1, 0.1, h, -90, 0,  2);
 
   // Grill box
   //base
-  cube(x, y + h, z, dx, dy, dz, 0, 0); // dx = 0.9, dy = 0.003, dz = 1.3
+  cube(x, y + h, z, dx, dy, dz, 0, 2); // dx = 0.9, dy = 0.003, dz = 1.3
   //myPoint(x , y + h, z + 1.2 );
   //right
   cube2(x - dx , y + h, z - dz , // position
         1.2, 1, dy,  // dimension
-        0, 0);
+        0, 2);
   // left
   cube2(x - dx , y + h, z + dz , // position
         1.2, 1, dy,  // dimension
-        0, 0);
+        0, 2);
   // back
   cube2(x - dx , y + h, z + dz , // position
         dz * 2, dx, dy,  // dimension
-        90, 0);
+        90, 2);
 
   for (double i = -1.25 ; i < 1.5; i += 0.25)
   {
     //printf("===> %f\n", i);
     if( i == -1.25)
      {
-      stud(x - dx , y + h + 0.5 ,i + z , 0.05, 0.05, dz * 1.5, 90, 1, 0); // grill right handle
+      stud(x - dx , y + h + 0.5 ,i + z , 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill right handle
      } 
     else if (i == 1.25)
     {
-      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.5, 90, 1, 0); // grill left handle
+      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.5, 90, 1, 2); // grill left handle
     }
     else
     {
-      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.1 , 90, 1, 0); // grill bars
+      stud(x - dx , y + h + 0.5 ,i + z, 0.05, 0.05, dz * 1.1 , 90, 1, 2); // grill bars
     }
     
   }
 
   stud(x + (dx * dy)  , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
-       180, 2, 0); // grill frony bar
+       180, 2, 2); // grill frony bar
 
   stud(x - dx + 0.1 , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
-       180, 2, 0); // grill back bar
+       180, 2, 2); // grill back bar
 
   
 }
@@ -1102,7 +1167,7 @@ static void ball(double x,double y,double z,double r)
 static void Sky(double D)
 {
 
-  //printf("D = %f\n", D);
+ // printf("D = %f\n", D);
   
   //double offset = 2.0;
    glColor3f(1,1,1);
@@ -1213,8 +1278,7 @@ void display()
    }
    //gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(ph),0);
 
-  //  Draw sky
-  if (box) Sky(10*dim);
+
   //  Light switch
   if (light)
   {
@@ -1248,15 +1312,32 @@ void display()
    //cube(0,0,0 , 0.5,0.5,0.5 , 0);
       //  Draw scene
       // **** Project *****
-      /*
-      picnicTable(1,0,1,2);
+      
+
+    
+// draw_blast();
+  
+        if(fireworks)
+        {
+          int i;
+          //glClear(GL_COLOR_BUFFER_BIT);
+          if (step < 0.9*length) {
+          for (i=0; i<numPoints; i++)
+          yacc[i] -= 0.02 / length; // gravity
+          draw_blast();
+          }
+          step ++;
+          if (step > length) fireworks_initialize();
+        }
+
+          //  Draw sky
+          if (box) Sky(10*dim);
+          picnicTable(1,0,1,2);
     
       grill(-3 ,0 ,-3,
             0.9, 0.003, 1.3,
-            2.75);
-    */
-
-    playground(0,0,-0,    0.5,0.5,6, 7);
+            2.75);    
+    playground(10,0,-10,    0.5,0.5,6, 7);
       // **** Project *****       
      // glCallList(obj);
 //  myPoint(1,1,1);
@@ -1291,7 +1372,7 @@ void display()
    }
    //  Display parameters
    glWindowPos2i(5,5);
-   Print("Angle=%d,%d  Dim=%.1f Light=%s Texture=%s  Mode = %s",th,ph,dim,light?"On":"Off",mode?"Replace":"Modulate",text[displayMode]);
+   Print("Angle=%d,%d  Dim=%.1f Light=%s Texture=%s  Mode = %s Skybox = %s Fireworks = %s",th,ph,dim,light?"On":"Off",mode?"Replace":"Modulate",text[displayMode], box?"On":"Off", fireworks?"On":"Off");
    if (light)
    {
       glWindowPos2i(5,25);
@@ -1467,6 +1548,10 @@ void key(unsigned char ch,int x,int y)
     box = 0;
    else if (ch=='p' && box == 0)
     box = 1;
+   else if (ch=='f' && fireworks == 1)
+    fireworks = 0;
+   else if (ch=='f' && fireworks == 0)
+    fireworks = 1;
   //  Translate shininess power to value (-1 => 0)
   shiny = shininess<0 ? 0 : pow(2.0,shininess);
   //  Reproject
@@ -1474,6 +1559,8 @@ void key(unsigned char ch,int x,int y)
    //  Tell GLUT it is necessary to redisplay the scene
   glutPostRedisplay();
 }
+
+
 
 /*
  *  GLUT calls this routine when the window is resized
@@ -1509,8 +1596,8 @@ int main(int argc,char* argv[])
   //argv[0] = "bunny.obj";
   texture[0] = LoadTexBMP("PlasterBare.bmp");
   texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
-  /*
-  texture[2] = LoadTexBMP("Grass.bmp");
+  texture[2] = LoadTexBMP("MetalFences0065.bmp");
+   /*
   texture[3] = LoadTexBMP("BarkDecidious.bmp");
   texture[4] = LoadTexBMP("ivy.bmp");
   texture[5] = LoadTexBMP("door.bmp");
