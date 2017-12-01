@@ -23,21 +23,21 @@
 int mode=0;       //  Texture mode
 int displayMode = 1; //  What to display
 int ntex=0;       //  Cube faces
-int axes=1;       //  Display axes
+int axes=0;       //  Display axes
 int th=0;         //  Azimuth of view angle
-int ph=0;         //  Elevation of view angle
+int ph=5;         //  Elevation of view angle
 int light=1;      //  Lighting
 int rep=1;        //  Repitition
 double asp=1;     //  Aspect ratio
 int fov = 55; // Field of View
 double dim=15;   //  Size of world
-int    box=0;    //  Draw sky
+int    box=1;    //  Draw sky
 int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
 int fireworks=0; // Fireworks
 // Light values
 int emission  =   0;  // Emission intensity (%)
-int ambient   =  30;  // Ambient intensity (%)
+int ambient   =  0;  // Ambient intensity (%)
 int diffuse   = 100;  // Diffuse intensity (%)
 int specular  =   0;  // Specular intensity (%)
 int shininess =   0;  // Shininess (power of two)
@@ -76,13 +76,19 @@ GLfloat xacc[MAX_POINTS], yacc[MAX_POINTS], zacc[MAX_POINTS];
 GLfloat red, green, blue;
 int step; int length;
 
+/*
+* generate the particles for the fireworks
+*
+*
+*/
+
 void fireworks_initialize()
 { 
     int j; double temp, temp2,temp3;
 
   numPoints = drand48()*(MAX_POINTS-1);
   curx = -0.5 + drand48();
-  cury = 10.0 + drand48();
+  cury = 12.0 + drand48();
   curz = +0.25 + drand48();
 
   red = 0.5 + 0.5*drand48();
@@ -94,41 +100,42 @@ void fireworks_initialize()
 
 
   /* initialize the blast */
-  for (j=0 ; j<numPoints ; j++ ) {
-  x[j] = curx;
-  y[j] = cury;
-  z[j] = curz;
-  temp = drand48()*5;
-  temp2 = drand48()*2.0*M_PI;
-  temp3 = drand48()*M_PI;
-  xacc[j] = (cos(temp2) * sin(temp3) * temp)/length;
-  yacc[j] = (sin(temp2) * sin(temp3) * temp)/length;
-  zacc[j] = (cos(temp3) * temp)/length;
+  for (j=0 ; j<numPoints ; j++ ) 
+  {
+    x[j] = curx;
+    y[j] = cury;
+    z[j] = curz;
+    temp = drand48()*10;
+    temp2 = drand48()*2.0*M_PI;
+    temp3 = drand48()*M_PI;
+    xacc[j] = (cos(temp2) * sin(temp3) * temp)/length;
+    yacc[j] = (sin(temp2) * sin(temp3) * temp)/length;
+    zacc[j] = (cos(temp3) * temp)/length;
 
+  }
 
 }
 
-}
-
-void draw_blast(void)
+void draw_blast()
 { 
-    glClear(GL_COLOR_BUFFER_BIT);
-    glPushMatrix();
-   // glTranslated(drand48(),drand48(),drand48());
-    int i;
-double glow = (length - step) / (double)length;
-glColor3f(red*glow, green*glow, blue*glow);
-glBegin(GL_POINTS);
-for (i=0;i<numPoints;i++) {
-x[i] += xacc[i];
-y[i] += yacc[i];
-z[i] += zacc[i];
-glVertex3f(x[i], y[i], z[i]);
-}
-glEnd();
-glFlush();
-glPopMatrix();
-//glutSwapBuffers();
+  glClear(GL_COLOR_BUFFER_BIT);
+  glPushMatrix();
+  // glTranslated(drand48(),drand48(),drand48());
+  int i;
+  double glow = (length - step) / (double)length;
+  glColor3f(red*glow, green*glow, blue*glow);
+  glBegin(GL_POINTS);
+  for (i=0;i<numPoints;i++) 
+  {
+    x[i] += xacc[i];
+    y[i] += yacc[i];
+    z[i] += zacc[i];
+    glVertex3f(x[i], y[i], z[i]);
+  }
+  glEnd();
+  glFlush();
+  glPopMatrix();
+  //glutSwapBuffers();
 }
 /*
  *  Draw a cube
@@ -611,68 +618,6 @@ void drawKetchup(double x,double y,double z,
  }
 
 
-void draw_cylinder(GLfloat radius, GLfloat height,
-  GLubyte R, GLubyte G,GLubyte B,
-  double x1,double y1,double z1,
-  double xt, double yt, double zt)
-{
-  GLfloat x              = 0.0;
-  GLfloat y              = 0.0;
-  GLfloat angle          = 0.0;
-  GLfloat angle_stepsize = 0.1;
-
-  //  Save transformation
-  glPushMatrix();
-  glTranslatef(x1,0,z1);
-  glRotated(-90,1,0,0);
-  glScaled(xt, yt, zt);
-
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
-  glColor3f(1,1,1);
-    //glColor3f(0.560784 , 0.737255 , 0.560784);
-  glBindTexture(GL_TEXTURE_2D,texture[3]);
-
-  /** Draw the tube */
-  glColor3ub(R-40,G-40,B-40);
-  glBegin(GL_QUAD_STRIP);
-  angle = 0.0;
-  while( angle < 2*PI ) 
-  {
-      x = radius * cos(angle);
-      y = radius * sin(angle);
-      float tc = (angle / (float)(2 * PI));
-      glNormal3f(cos(angle) , sin(angle), 0);
-      glTexCoord2f(tc, 0.0);
-      glVertex3f(x, y , height);
-      glTexCoord2f(tc, 1.0);
-      glVertex3f(x, y , 0.0);
-      angle = angle + angle_stepsize;
-  }
-  glVertex3f(radius, 0.0, height);
-  glVertex3f(radius, 0.0, 0.0);
-  glEnd();
-
-  /** Draw the circle on top of cylinder */
-  glColor3ub(R,G,B);
-  glBegin(GL_POLYGON);
-  angle = 0.0;
-  while( angle < 2*PI ) 
-  {
-      x = radius * cos(angle);
-      y = radius * sin(angle);
-      glVertex3f(x, y , height);
-      angle = angle + angle_stepsize;
-  }
-  glVertex3f(radius, 0.0, height);
-  glEnd();
-
-  //  Undo transformations
- glPopMatrix();
- glDisable(GL_TEXTURE_2D);
-}
-
-
 /*
 * Draw Picnic Table
 * at (x, y ,Y)
@@ -776,13 +721,13 @@ void pillar(double x,double y,double z,
 {
   //pillars
   glColor3f(1,0,0);
-  cylinder(x ,y ,z, dx, dy, dz, -90, 0,  -1);
+  cylinder(x ,y ,z, dx, dy, dz, -90, 0,  3);
   glColor3f(0,0,1);
   for (double i = 1.5 ; i < 6; i += 2)
   {
-    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
-    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
-    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  -1);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
+    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
   }
 }
 
@@ -848,19 +793,19 @@ void barrier(double x,double y,double z,
 
   glColor3f(0,0,1);
   // horizantal bars
-  cylinder(x,hight,z, 0.1,0.1,d, angle,1,-1);
-  cylinder(x,hight - 1,z, 0.1,0.1,d, angle,1,-1);
+  cylinder(x,hight,z, 0.1,0.1,d, angle,1,4);
+  cylinder(x,hight - 1,z, 0.1,0.1,d, angle,1,4);
 
   //vertical bars
   for (double i = 1 ; i < d; i += 1)
   {
     if(axis == 0)
     {
-    cylinder(x + i ,hight - 1,z ,   0.1,0.1, 1, -90,0, -1);
+    cylinder(x + i ,hight - 1,z ,   0.1,0.1, 1, -90,0, 4);
     }
-    else{
-
-      cylinder(x ,hight - 1,z - i,   0.1,0.1, 1, -90,0, -1);
+    else
+    {
+      cylinder(x ,hight - 1,z - i,   0.1,0.1, 1, -90,0, 4);
     }
     
   }
@@ -903,16 +848,16 @@ void playground(double x,double y,double z,
   barrier(x,y,z, d,180,1);
 
   // cylinderical stairs
-  glColor3f(0,0,1);
-  cylinder(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,-1);
-  glColor3f(1,0,0);
-  cylinder(x+4.75,y,z - d - 1,   1.3,1.3,3.25,   -90,0,-1);
-  glColor3f(1,1,0);
-  cylinder(x+2.5,y,z - d - 2,   1.3,1.3,2.5,   -90,0,-1);
-  glColor3f(0,1,0);
-  cylinder(x+4.25,y,z - d - 3,   1.3,1.3,1.5,   -90,0,-1);
-  glColor3f(0,0,1);
-  cylinder(x+2.5,y,z - d - 4,   1.3,1.3,0.5,   -90,0,-1);
+  //glColor3f(0,0,1);
+  cylinder(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,4);
+  //glColor3f(1,0,0);
+  cylinder(x+4.75,y,z - d - 1,   1.3,1.3,3.25,   -90,0,3);
+  //glColor3f(1,1,0);
+  cylinder(x+2.5,y,z - d - 2,   1.3,1.3,2.5,   -90,0,5);
+  //glColor3f(0,1,0);
+  cylinder(x+4.25,y,z - d - 3,   1.3,1.3,1.5,   -90,0,6);
+  //glColor3f(0,0,1);
+  cylinder(x+2.5,y,z - d - 4,   1.3,1.3,0.5,   -90,0,4);
   // roof
 
   roof(x,y,z      ,dx,dy,dz,    d);
@@ -950,7 +895,7 @@ static void Sky(double D)
 {
 
  // printf("D = %f\n", D);
-  
+    double D2= D;
   //double offset = 2.0;
    glColor3f(1,1,1);
    glEnable(GL_TEXTURE_2D);
@@ -993,18 +938,20 @@ static void Sky(double D)
    //  Top and bottom
    glBindTexture(GL_TEXTURE_2D,park[2]);
    glBegin(GL_QUADS);
-   glTexCoord2f(0.0,1); glVertex3f(+D,+D,-D);
-   glTexCoord2f(1,1); glVertex3f(+D,+D,+D);
-   glTexCoord2f(1,0); glVertex3f(-D,+D,+D);
-   glTexCoord2f(0.0,0); glVertex3f(-D,+D,-D);
+   glTexCoord2f(0.0,1); glVertex3f(+D,+D+D2,-D);
+   glTexCoord2f(1,1); glVertex3f(+D,+D+D2,+D);
+   glTexCoord2f(1,0); glVertex3f(-D,+D+D2,+D);
+   glTexCoord2f(0.0,0); glVertex3f(-D,+D+D2,-D);
    glEnd();
 
    glBindTexture(GL_TEXTURE_2D,park[5]);
    glBegin(GL_QUADS);
-   glTexCoord2f(0.0,0); glVertex3f(-D,-D,+D);
-   glTexCoord2f(1,0); glVertex3f(+D,-D,+D);
-   glTexCoord2f(1,1); glVertex3f(+D,-D,-D);
-   glTexCoord2f(0,1); glVertex3f(-D,-D,-D);
+   glTexCoord2f(0.0,0); glVertex3f(-D,-D+D2,+D);
+   glTexCoord2f(10,0); glVertex3f(+D,-D+D2,+D);
+   glTexCoord2f(10,10); glVertex3f(+D,-D+D2,-D);
+   glTexCoord2f(0,10); glVertex3f(-D,-D+D2,-D);
+
+   
    glEnd();
 
    glDisable(GL_TEXTURE_2D);
@@ -1048,12 +995,12 @@ void display()
            cameraHight = 4;
            atX = Sin(angle);
            atZ = Cos(angle);
-           printf("%f ,%f\n ", atX,atZ);
+           //printf("%f ,%f\n ", atX,atZ);
            gluLookAt(eyeX, cameraHight, eyeZ,   eyeX + atX ,cameraHight, eyeZ + atZ,      0, cameraHight ,0); 
            //gluLookAt(eyeX, 1, eyeZ, eyeX + ex, 1, eyeZ + ez, 0, 1, 0);
            //gluLookAt(eyeX, 1, eyeY, eyeX + ex, eyeY + ey,1, 0,0,1);
 
-          printf("eyeX = %f eyeZ = %f lx = %f lz = %f angle= %d\n",eyeX , eyeZ, atX, atZ,  angle);
+          //printf("eyeX = %f eyeZ = %f lx = %f lz = %f angle= %d\n",eyeX , eyeZ, atX, atZ,  angle);
            break;
 
    }
@@ -1110,17 +1057,17 @@ void display()
     //  Draw sky
     if (box) Sky(10*dim);
     picnicTable(1,0,1,2);
-  
+    double inlarge = 1;
     grill(-3 ,0 ,-3,
-          0.9, 0.003, 1.3,
-          2.75);    
+          0.9*inlarge, 0.003*inlarge, 1.3*inlarge,
+          2.75*inlarge);    
     playground(10,0,-10,    0.5,0.5,6, 7);
 
 
     
     
       // **** Project *****       
-     // glCallList(obj);
+     //glCallList(obj);
 
    //  Draw axes - no lighting from here on
    glDisable(GL_LIGHTING);
@@ -1264,6 +1211,7 @@ void key(unsigned char ch,int x,int y)
    //  Reset view angle
   else if (ch == '0')
     th = ph = 0;
+  /*  
   else if (ch == 'w' || ch == 'W')
   {
       eyeX += atX * fraction;
@@ -1282,6 +1230,7 @@ void key(unsigned char ch,int x,int y)
   {
       angle -= 5;
   }
+  */
   //  Switch display mode
   else if (ch == 'm' || ch == 'M')
   {
@@ -1317,7 +1266,10 @@ void key(unsigned char ch,int x,int y)
     ylight += 0.1;
   //  Ambient level
   else if (ch=='a' && ambient>0)
+  {
     ambient -= 5;
+    printf("ambient %d", ambient );
+  }
   else if (ch=='A' && ambient<100)
     ambient += 5;
   //  Diffuse level
@@ -1398,12 +1350,12 @@ int main(int argc,char* argv[])
   texture[0] = LoadTexBMP("PlasterBare.bmp");
   texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
   texture[2] = LoadTexBMP("MetalFences0065.bmp");
-   /*
-  texture[3] = LoadTexBMP("BarkDecidious.bmp");
-  texture[4] = LoadTexBMP("ivy.bmp");
-  texture[5] = LoadTexBMP("door.bmp");
-  texture[6] = LoadTexBMP("WindowsHouseOld.bmp");
-  texture[7] = LoadTexBMP("Leaves0017.bmp");
+  
+  texture[3] = LoadTexBMP("Red_Fiberglass.bmp");
+  texture[4] = LoadTexBMP("Blue_Plastic.bmp");
+  texture[5] = LoadTexBMP("Green_Fiberglass.bmp");
+  texture[6] = LoadTexBMP("Yellow_Fiberglass.bmp");
+  /*texture[7] = LoadTexBMP("Leaves0017.bmp");
   texture[8] = LoadTexBMP("Leaves0206.bmp");
 */
   //  Load skybox texture
@@ -1419,7 +1371,7 @@ int main(int argc,char* argv[])
   park[5] = LoadTexBMP("negy.bmp");
 
    //  Load object
-   //obj = LoadOBJ(argv[0]);
+  // obj = LoadOBJ("plate.obj");
 
    //  Pass control to GLUT so it can interact with the user
    ErrCheck("init");

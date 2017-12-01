@@ -1,20 +1,35 @@
-Hw6: The 'Village' by Mahmoud Aljarrash with Textures and Lighting
+The 'Park' by Mahmoud Aljarrash
 
 Mahmoud Aljarrash
 CSCI5229 Fall 2017
 
 
 Key bindings
-  l          Toggle lighting on/off
-  m          Toggles texture mode modulate/replace
-  a/A        decrease/increase ambient light
-  d/D        decrease/increase diffuse light
-  s/S        decrease/increase specular light
-  e/E        decrease/increase emitted light
-  n/N        Decrease/increase shininess
-  []         Lower/rise light
-  x          Toggle axes
-  arrows     Change view angle
-  PgDn/PgUp  Zoom in and out
-  0          Reset view angle
-  ESC        Exit
+  l                     Toggle lighting on/off
+  f                     Toggle fireworks on/off
+  a/A                   decrease/increase ambient light
+  d/D                   decrease/increase diffuse light
+  s/S                   decrease/increase specular light
+  e/E                   decrease/increase emitted light
+  n/N                   Decrease/increase shininess
+  [ ]                   Lower/rise light
+  x                     Toggle axes
+  arrows                Change view angle
+  arrows (FPS mode)     Navigation
+  PgDn/PgUp             Zoom in and out
+  0                     Reset view angle
+  ESC                   Exit
+
+
+•	The objects in the scene has a lot of details since I did my best to model real-life objects.
+•	I’ve implemented simple fireworks using particles system.
+•	The code is modular and organized. 
+
+
+
+My plan:
+•	Add more objects like: a slide, a swing, and some toys.
+•	Implement the grill smoke.
+•	Fix some of the lighting issues in the scene.
+•	Look for better textures.
+•	Load some OBJ objects to enhance the scene. 

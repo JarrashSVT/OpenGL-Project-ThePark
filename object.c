@@ -278,6 +278,8 @@ int LoadOBJ(const char* file)
    //  Push attributes for textures
    glPushAttrib(GL_TEXTURE_BIT);
 
+  glTranslated(1.3,2.3,1.3);
+  glScaled(0.1,0.1,0.1);
    //  Read vertexes and facets
    V  = N  = T  = NULL;
    Nv = Nn = Nt = 0;
@@ -298,6 +300,7 @@ int LoadOBJ(const char* file)
       {
          line++;
          //  Read Vertex/Texture/Normal triplets
+         
          glBegin(GL_POLYGON);
          while ((str = getword(&line)))
          {
