@@ -737,6 +737,11 @@ void roof(double x,double y,double z,
 {
   double hight = dz;
 
+  
+  printf("d = %f\n", d);
+  printf("x = %f\n", x);
+  printf("hight (y) = %f\n", hight);
+  printf("z = %f\n", z);
 //  Set specular color to white
   float white[] = {1,1,1,1};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
@@ -749,26 +754,30 @@ void roof(double x,double y,double z,
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
   glBegin(GL_TRIANGLES);
 
-  glNormal3f(0, -d*d/2, +d*d/4);
-  glVertex3f(x,hight, z);
-  glVertex3f(x + d ,hight, z);
-  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  glNormal3f(0, -d*d/2, -d*d/4); //1
   
-  glNormal3f(-d*d/4, d*d/2, 0);
-  glVertex3f(x,hight, z);
-  glVertex3f(x  ,hight, z + d);
-  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  glVertex3f(x       ,hight      , z      );
+  glVertex3f(x + d   ,hight      , z      );
+  glVertex3f(x + d/2 ,hight + d/4, z + d/2);
   
-  glNormal3f(0, +d*d/2, -d*d/4);
-  glVertex3f(x,hight, z + d);
-  glVertex3f(x + d ,hight, z + d);
-  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  glNormal3f(-d*d/4, +d*d/2, 0); //2
+
+  glVertex3f(x       ,hight       , z      );
+  glVertex3f(x       ,hight       , z + d  );
+  glVertex3f(x + d/2 ,hight + d/4 , z + d/2);
+  
+  glNormal3f(0, +d*d/2, +d*d/4); //3
+  
+  glVertex3f(x      ,hight       , z + d  );
+  glVertex3f(x + d  ,hight       , z + d  );
+  glVertex3f(x + d/2,hight + d/4 , z + d/2);
 
 
-  glNormal3f(d*d/4, -d*d/2, 0);
-  glVertex3f(x + d,hight, z);
-  glVertex3f(x + d ,hight, z + d);
-  glVertex3f(x + d/2,hight+d/4, z+d/2);
+  glNormal3f(+d*d/4, -d*d/2, 0); //4
+
+  glVertex3f(x + d  ,hight      , z      );
+  glVertex3f(x + d  ,hight      , z + d  );
+  glVertex3f(x + d/2,hight + d/4, z + d/2);
   
   glEnd();
   //  Undo transformations
@@ -812,12 +821,95 @@ void barrier(double x,double y,double z,
 }
 
 void slide(double x,double y,double z,
-          double d)
+          double d, double angle)
 {
-   double hight = dz*3.9;
-
-   cube3(x+d,hight,z-d+1.5,    d, 0.25, d-3, -40,10);
+   double hight = dz*3.80;
+  
+  //printf("slide: d = %f\n", d);
+  // surface
+   cube3(x+d,hight,z-d+1.5,    
+        d, 0.25, d-3,angle,
+        6);
+  //right 
+  cube3(x+d,hight,z-d+1.5,    
+        d,0.75,0.25, angle,
+        6);   
+  //left 
+  cube3(x+d,hight,z-1.5,    
+       d,0.75,0.25, angle,
+        6);   
 }
+
+
+void swing(double x,double y,double z,
+             double d, double angle, int axis)
+{
+  double hight = y + d/1.25;
+
+  //printf("swing: hight = %f\n", hight);
+  // horizantal bar
+  cylinder(x,hight,z, 0.1,0.1,d, angle,1,4);
+
+  //ropes
+  cylinder(x  ,hight,z - 2.5 ,   0.1,0.1, hight - 1.5, 90,0, 40);
+  cylinder(x  ,hight,z - 4.5 ,   0.1,0.1, hight - 1.5, 90,0, 40);
+
+  //chair
+  cube2(x-1,hight - 4,z - 4.75,    2, 0.25, 2.5, 0,10);
+}
+
+/* Draw a bulldozer
+* (x, y, z) location
+* (dx, dy, dz) size 
+* with angle
+*
+*/
+void bulldozer(double x,double y,double z,
+              //double dx,double dy,double dz,
+               double angle)
+{
+    //bottom part
+    cube2(x,y,z,
+    1,0.25,1.5,
+    angle,1);
+
+    // middle part
+    cube2(x-0.1,y+0.25,z-0.1,
+    1.2,0.25,1.7,
+    angle,6);
+    
+    //top back
+    cube2(x-0.1,y+0.5,z-0.1,
+    1.2,0.75,0.7,
+    angle,6);
+    //top front
+    cube2(x-0.1,y+0.5,z+0.5,
+    1.2,0.45,1.2,
+    angle,6);
+
+    glColor3f(0.412, 0.412, 0.412);
+    
+    //rare tire
+    cylinder(x+1.1,y+0.35,z+0.4,
+    0.35,0.35,0.1,
+    90,1,-1);
+    
+    //front tire
+    cylinder(x+1.1,y+0.35,z+1.4,
+    0.35,0.35,0.1,
+    90,1,-1);
+
+    //rare tire
+    cylinder(x-0.1,y+0.35,z+0.4,
+    0.35,0.35,0.1,
+    -90,1,-1);
+    
+    //front tire
+    cylinder(x-0.1,y+0.35,z+1.4,
+    0.35,0.35,0.1,
+    -90,1,-1);
+}
+
 
 
 /*
@@ -834,6 +926,7 @@ void playground(double x,double y,double z,
   
   //pillars
   // inbetween
+  
   pillar(x,     y, z,      dx,dy,dz);
   pillar(x + d, y, z,      dx,dy,dz);
   barrier(x,y,z, d,90,0);
@@ -841,12 +934,12 @@ void playground(double x,double y,double z,
   // with roof
   pillar(x + d, y, z + d,  dx,dy,dz);
   pillar(x    , y, z + d,  dx,dy,dz);
-
+  barrier(x,y,z+d, d,90,0);
   // with floor
   pillar(x + d, y, z - d,  dx,dy,dz);
   pillar(x    , y, z - d,  dx,dy,dz);
   barrier(x,y,z, d,180,1);
-
+  
   // cylinderical stairs
   //glColor3f(0,0,1);
   cylinder(x+2.25,y,z - d - 0.5,   1.3,1.3,3.8,   -90,0,4);
@@ -866,8 +959,15 @@ void playground(double x,double y,double z,
 
 
   //silde
-  slide(x,y,z,d);
+  slide(x,y,z,d, -40);
   
+  //swing
+  swing(x+d/2,y,z+d, d,180,0);
+
+
+  bulldozer(-x/2,y,x/3, 0);
+
+
 }
 /*
  *  Draw a ball
@@ -1045,10 +1145,11 @@ void display()
     {
       int i;
       //glClear(GL_COLOR_BUFFER_BIT);
-      if (step < 0.9*length) {
-      for (i=0; i<numPoints; i++)
-      yacc[i] -= 0.02 / length; // gravity
-      draw_blast();
+      if (step < 0.9*length) 
+      {
+        for (i=0; i<numPoints; i++)
+          yacc[i] -= 0.02 / length; // gravity
+        draw_blast();
       }
       step ++;
       if (step > length) fireworks_initialize();
