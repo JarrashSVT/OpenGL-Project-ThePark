@@ -54,3 +54,7 @@ dkms.conf
 # Documents
 *.docx
 *.pdf
+
+#texture folders
+park_texture
+yoko/
