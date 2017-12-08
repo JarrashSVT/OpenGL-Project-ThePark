@@ -56,5 +56,5 @@ dkms.conf
 *.pdf
 
 #texture folders
-park_texture
+park_texture/
 yoko/
