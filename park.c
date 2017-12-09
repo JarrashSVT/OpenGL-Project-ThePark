@@ -35,6 +35,7 @@ int    box=1;    //  Draw sky
 int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
 int fireworks=0; // Fireworks
+int debug = 0;
 // Light values
 int emission  =   0;  // Emission intensity (%)
 int ambient   =  0;  // Ambient intensity (%)
@@ -43,7 +44,7 @@ int specular  =   0;  // Specular intensity (%)
 int shininess =   0;  // Shininess (power of two)
 float shiny   =   1;    // Shininess (value)
 int zh        =  90;  // Light azimuth
-float ylight  =   0;  // Elevation of light
+float ylight  =   7;  // Elevation of light
 unsigned int texture[9]; // Texture names
 char *text[] = {"Orthogonal","Prespective","FPS"}; 
 int obj;          //  Object display list
@@ -737,11 +738,13 @@ void roof(double x,double y,double z,
 {
   double hight = dz;
 
-  
-  printf("d = %f\n", d);
-  printf("x = %f\n", x);
-  printf("hight (y) = %f\n", hight);
-  printf("z = %f\n", z);
+  if(debug)
+  {
+    printf("d = %f\n", d);
+    printf("x = %f\n", x);
+    printf("hight (y) = %f\n", hight);
+    printf("z = %f\n", z);
+  }
 //  Set specular color to white
   float white[] = {1,1,1,1};
   float Emission[]  = {0.0,0.0,0.01*emission,1.0};
@@ -750,38 +753,64 @@ void roof(double x,double y,double z,
   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,Emission);
    //  Save transformation
   glPushMatrix();
-  glColor3f(0,1,0);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+
+  //  Enable textures
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+    glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,texture[5]);
+  //glColor3f(0,1,0);
+  
+  //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+
+
   glBegin(GL_TRIANGLES);
+  glNormal3f(0, +d*d/2, -d*d/4); //1
+  glTexCoord2f(0,0);glVertex3f(x       ,hight      , z      );
+  glTexCoord2f(1,0);glVertex3f(x + d   ,hight      , z      );
+  glTexCoord2f(0,1);glVertex3f(x + d/2 ,hight + d/4, z + d/2);
+  glEnd();
 
-  glNormal3f(0, -d*d/2, -d*d/4); //1
-  
-  glVertex3f(x       ,hight      , z      );
-  glVertex3f(x + d   ,hight      , z      );
-  glVertex3f(x + d/2 ,hight + d/4, z + d/2);
-  
+  if(debug)
+  {
+    printf("Normal 1 = <%d, %f, %f>\n", 0, -d*d/2, +d*d/4);
+    printf("V11 = (%f, %f, %f)\n", x       ,hight      , z);
+    printf("V12 = (%f, %f, %f)\n", x + d   ,hight      , z      );
+    printf("V13 = (%f, %f, %f)\n", x + d/2 ,hight + d/4, z + d/2);
+  }
+
+  glBegin(GL_TRIANGLES);
   glNormal3f(-d*d/4, +d*d/2, 0); //2
+  glTexCoord2f(0,0);glVertex3f(x       ,hight       , z      );
+  glTexCoord2f(1,0);glVertex3f(x       ,hight       , z + d  );
+  glTexCoord2f(0,1);glVertex3f(x + d/2 ,hight + d/4 , z + d/2);
+  glEnd();
 
-  glVertex3f(x       ,hight       , z      );
-  glVertex3f(x       ,hight       , z + d  );
-  glVertex3f(x + d/2 ,hight + d/4 , z + d/2);
-  
+  glBegin(GL_TRIANGLES);
   glNormal3f(0, +d*d/2, +d*d/4); //3
+  glTexCoord2f(0,0);glVertex3f(x      ,hight       , z + d  );
+  glTexCoord2f(1,0);glVertex3f(x + d  ,hight       , z + d  );
+  glTexCoord2f(0,1);glVertex3f(x + d/2,hight + d/4 , z + d/2);
+  glEnd();
   
-  glVertex3f(x      ,hight       , z + d  );
-  glVertex3f(x + d  ,hight       , z + d  );
-  glVertex3f(x + d/2,hight + d/4 , z + d/2);
+  glBegin(GL_TRIANGLES);
+  glNormal3f(+d*d/4, +d*d/2, 0); //4
+  glTexCoord2f(0,0);glVertex3f(x + d  ,hight      , z      );
+  glTexCoord2f(1,0);glVertex3f(x + d  ,hight      , z + d  );
+  glTexCoord2f(0,1);glVertex3f(x + d/2,hight + d/4, z + d/2);
 
-
-  glNormal3f(+d*d/4, -d*d/2, 0); //4
-
-  glVertex3f(x + d  ,hight      , z      );
-  glVertex3f(x + d  ,hight      , z + d  );
-  glVertex3f(x + d/2,hight + d/4, z + d/2);
+  if(debug)
+  {
+    printf("Normal 4 = <%f, %f, %d>\n", -d*d/4, -d*d/2, 0);
+    printf("V41 = (%f, %f, %f)\n", x + d  ,hight      , z      );
+    printf("V42 = (%f, %f, %f)\n", x + d  ,hight      , z + d  );
+    printf("V43 = (%f, %f, %f)\n", x + d/2,hight + d/4, z + d/2);
+  }
   
   glEnd();
   //  Undo transformations
   glPopMatrix();
+  glDisable(GL_TEXTURE_2D);
 }
 
 void playground_floor(double x,double y,double z,
@@ -791,7 +820,7 @@ void playground_floor(double x,double y,double z,
 
   double hight = dz*3.75;
 
-  cube2(x,hight,z,    d, 0.25, d, 0,10);
+  cube2(x,hight,z,    d, 0.25, d, 0,5);
 }
 
 
@@ -851,11 +880,11 @@ void swing(double x,double y,double z,
   cylinder(x,hight,z, 0.1,0.1,d, angle,1,4);
 
   //ropes
-  cylinder(x  ,hight,z - 2.5 ,   0.1,0.1, hight - 1.5, 90,0, 40);
-  cylinder(x  ,hight,z - 4.5 ,   0.1,0.1, hight - 1.5, 90,0, 40);
+  cylinder(x  ,hight,z - 2.5 ,   0.025,0.025, hight - 1.5, 90,0, 7);
+  cylinder(x  ,hight,z - 4.5 ,   0.03,0.03, hight - 1.5, 90,0, 7);
 
   //chair
-  cube2(x-1,hight - 4,z - 4.75,    2, 0.25, 2.5, 0,10);
+  cube2(x-1,hight - 4,z - 4.75,    2, 0.15, 2.5, 0,1);
 }
 
 /* Draw a bulldozer
@@ -1159,10 +1188,10 @@ void display()
     if (box) Sky(10*dim);
     picnicTable(1,0,1,2);
     double inlarge = 1;
-    grill(-3 ,0 ,-3,
+    grill(-3 ,0 ,+7,
           0.9*inlarge, 0.003*inlarge, 1.3*inlarge,
           2.75*inlarge);    
-    playground(10,0,-10,    0.5,0.5,6, 7);
+    playground(-10,0,-10,    0.5,0.5,6, 7);
 
 
     
@@ -1456,9 +1485,9 @@ int main(int argc,char* argv[])
   texture[4] = LoadTexBMP("Blue_Plastic.bmp");
   texture[5] = LoadTexBMP("Green_Fiberglass.bmp");
   texture[6] = LoadTexBMP("Yellow_Fiberglass.bmp");
-  /*texture[7] = LoadTexBMP("Leaves0017.bmp");
-  texture[8] = LoadTexBMP("Leaves0206.bmp");
-*/
+  texture[7] = LoadTexBMP("rope.bmp");
+  //texture[8] = LoadTexBMP("Leaves0206.bmp");
+
   //  Load skybox texture
   sky[0] = LoadTexBMP("sky0.bmp");
   sky[1] = LoadTexBMP("sky1.bmp");
