@@ -1,23 +1,26 @@
 /*
- *  \
+ * The 'Park' by Mahmoud Aljarrash
+ * 
+ *     Mahmoud Aljarrash
+ *     CSCI5229 Fall 2017
  *
  *  
  *
- *  Key bindings:
- *  l          Toggle lighting on/off
- *  t          Change textures
- *  m          Toggles texture mode modulate/replace
- *  a/A        decrease/increase ambient light
- *  d/D        decrease/increase diffuse light
- *  s/S        decrease/increase specular light
- *  e/E        decrease/increase emitted light
- *  n/N        Decrease/increase shininess
- *  []         Lower/rise light
- *  x          Toggle axes
- *  arrows     Change view angle
- *  PgDn/PgUp  Zoom in and out
- *  0          Reset view angle
- *  ESC        Exit
+ Key bindings:
+    l                     Toggle lighting on/off
+    f                     Toggle fireworks on/off
+    a/A                   decrease/increase ambient light
+    d/D                   decrease/increase diffuse light
+    s/S                   decrease/increase specular light
+    e/E                   decrease/increase emitted light
+    n/N                   Decrease/increase shininess
+    [ ]                   Lower/rise light
+    x                     Toggle axes
+    arrows                Change view angle
+    arrows (FPS mode)     Navigation
+    PgDn/PgUp             Zoom in and out
+    0                     Reset view angle
+    ESC                   Exit
  */
 #include "CSCIx229.h"
 int mode=0;       //  Texture mode
@@ -30,9 +33,8 @@ int light=1;      //  Lighting
 int rep=1;        //  Repitition
 double asp=1;     //  Aspect ratio
 int fov = 55; // Field of View
-double dim=15;   //  Size of world
+double dim=20;   //  Size of world
 int    box=1;    //  Draw sky
-int    sky[2];   //  Sky textures
 int    park[6];  // Park textures
 int fireworks=0; // Fireworks
 int debug = 0;
@@ -88,6 +90,8 @@ void fireworks_initialize()
     int j; double temp, temp2,temp3;
 
   numPoints = drand48()*(MAX_POINTS-1);
+  if(debug)
+    printf("numPoints = %d\n", numPoints);
   curx = -0.5 + drand48();
   cury = 12.0 + drand48();
   curz = +0.25 + drand48();
@@ -124,6 +128,8 @@ void draw_blast()
   // glTranslated(drand48(),drand48(),drand48());
   int i;
   double glow = (length - step) / (double)length;
+  if(debug)
+    printf("glow = %f\n", glow);
   glColor3f(red*glow, green*glow, blue*glow);
   glBegin(GL_POINTS);
   for (i=0;i<numPoints;i++) 
@@ -590,6 +596,7 @@ void drawCone(float x,float y, float z, float radius, float height)
     glVertex3f(0, 0, height);
     for (int angle = 0; angle < 360; angle++) 
     {
+        glNormal3f(sin(angle) * radius, cos(angle) * radius, radius);
         glVertex3f(sin(angle) * radius, cos(angle) * radius, 0);
     }
     glEnd();
@@ -597,8 +604,7 @@ void drawCone(float x,float y, float z, float radius, float height)
 }
 
 void drawKetchup(double x,double y,double z,
-    //double length, double width, double height,
-    double th)
+                 double th)
  {
     //  Save transformation
     glPushMatrix();
@@ -606,12 +612,11 @@ void drawKetchup(double x,double y,double z,
     glTranslated(x,y,z);
     //glRotated(-90,1,0,0);
     glRotated(th,1,0,0);
-    //glScaled(length,width,height);
-   // draw_cylinder(0.25, 1.0, 1, 0, 0,x, y, z, 1,1,1);
+   
 
-   cylinder2(x, y, z, 0.25, 1);
-   cylinder2(x, y+1 , z, .15, 0.1);
-   drawCone(x, y+1.1, z, 0.075, 0.25);
+    cylinder2(x, y, z, 0.25, 1);
+    cylinder2(x, y+1 , z, .15, 0.1);
+    drawCone(x, y+1.1, z, 0.075, 0.25);
 
     //  Undo transformations
     glPopMatrix();
@@ -637,11 +642,10 @@ void picnicTable(double x,double y,double z,double h)
   tableSide(x + 10, y, z, 0.5, h, 4, 0, 0.15, 0);
 
   // Top surface
-  cube2(x - 0.5 ,h ,z + 0.1, 11.5, 0.2, 0.8, 0 ,1);
-  cube2(x - 0.5 ,h ,z + 1.1, 11.5, 0.2, 0.8, 0 ,1);
-  cube2(x - 0.5 ,h ,z + 2.1, 11.5, 0.2, 0.8, 0 ,1);
-  cube2(x - 0.5 ,h ,z + 3.1, 11.5, 0.2, 0.8, 0 ,1);
-
+  for (double i = 0.1 ; i < 4; i += 1.00)
+  {
+    cube2(x - 0.5 ,h ,z + i, 11.5, 0.2, 0.8, 0 ,1);
+  }
   // Seats support bars
   cube2(x + 0.5, y + 0.2 ,z - 2.5, 0.1, h/2, 8.9, 0, 1);
   cube2(x + 9.99, y + 0.2 ,z - 2.5, 0.1, h/2, 8.9, 0, 1);
@@ -708,7 +712,7 @@ void grill(double x,double y,double z,
 
   cylinder(x + (dx * dy)  , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
-       180, 2, 2); // grill frony bar
+       180, 2, 2); // grill front bar
 
   cylinder(x - dx + 0.1 , y + h + 0.5 ,0 + z - dz,
        0.05, 0.05, dz * 2 ,
@@ -723,11 +727,11 @@ void pillar(double x,double y,double z,
   //pillars
   glColor3f(1,0,0);
   cylinder(x ,y ,z, dx, dy, dz, -90, 0,  3);
-  glColor3f(0,0,1);
+
+  // pillar blue rings
+   glColor3f(0,0,1);
   for (double i = 1.5 ; i < 6; i += 2)
   {
-    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
-    cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
     cylinder(x ,y + i ,z, dx*1.5, dy*1.5, dz/20, -90, 0,  4);
   }
 }
@@ -814,8 +818,7 @@ void roof(double x,double y,double z,
 }
 
 void playground_floor(double x,double y,double z,
-          
-          double d)
+                      double d)
 {
 
   double hight = dz*3.75;
@@ -850,7 +853,7 @@ void barrier(double x,double y,double z,
 }
 
 void slide(double x,double y,double z,
-          double d, double angle)
+           double d, double angle)
 {
    double hight = dz*3.80;
   
@@ -1476,7 +1479,6 @@ int main(int argc,char* argv[])
   glutKeyboardFunc(key);
   glutIdleFunc(idle);
   //  Load textures
-  //argv[0] = "bunny.obj";
   texture[0] = LoadTexBMP("PlasterBare.bmp");
   texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
   texture[2] = LoadTexBMP("MetalFences0065.bmp");
@@ -1488,11 +1490,8 @@ int main(int argc,char* argv[])
   texture[7] = LoadTexBMP("rope.bmp");
   //texture[8] = LoadTexBMP("Leaves0206.bmp");
 
-  //  Load skybox texture
-  sky[0] = LoadTexBMP("sky0.bmp");
-  sky[1] = LoadTexBMP("sky1.bmp");
+  //  Load park skybox texture
 
-  //  Load park texture
   park[0] = LoadTexBMP("posx.bmp");
   park[1] = LoadTexBMP("posz.bmp");
   park[2] = LoadTexBMP("posy.bmp");
@@ -1501,7 +1500,8 @@ int main(int argc,char* argv[])
   park[5] = LoadTexBMP("negy.bmp");
 
    //  Load object
-  // obj = LoadOBJ("plate.obj");
+   //couldn't find a good object to load.
+   //obj = LoadOBJ("coke.obj");
 
    //  Pass control to GLUT so it can interact with the user
    ErrCheck("init");
