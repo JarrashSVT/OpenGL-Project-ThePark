@@ -25,11 +25,3 @@ Key bindings
 •	I’ve implemented simple fireworks using particles system.
 •	The code is modular and organized. 
 
-
-
-My plan:
-•	Add more objects like: a slide, a swing, and some toys.
-•	Implement the grill smoke.
-•	Fix some of the lighting issues in the scene.
-•	Look for better textures.
-•	Load some OBJ objects to enhance the scene. 
