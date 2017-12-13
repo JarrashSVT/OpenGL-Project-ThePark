@@ -81,7 +81,7 @@ int step; int length;
 
 /*
 * generate the particles for the fireworks
-*
+* based on code from https://www.cs.uaf.edu/~cs202/node4.html
 *
 */
 
@@ -759,13 +759,10 @@ void roof(double x,double y,double z,
   glPushMatrix();
 
   //  Enable textures
-    glEnable(GL_TEXTURE_2D);
-    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
-    glColor3f(1,1,1);
-    glBindTexture(GL_TEXTURE_2D,texture[5]);
-  //glColor3f(0,1,0);
-  
-  //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+  glEnable(GL_TEXTURE_2D);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,mode?GL_REPLACE:GL_MODULATE);
+  glColor3f(1,1,1);
+  glBindTexture(GL_TEXTURE_2D,texture[5]);
 
 
   glBegin(GL_TRIANGLES);
@@ -1129,8 +1126,6 @@ void display()
            atZ = Cos(angle);
            //printf("%f ,%f\n ", atX,atZ);
            gluLookAt(eyeX, cameraHight, eyeZ,   eyeX + atX ,cameraHight, eyeZ + atZ,      0, cameraHight ,0); 
-           //gluLookAt(eyeX, 1, eyeZ, eyeX + ex, 1, eyeZ + ez, 0, 1, 0);
-           //gluLookAt(eyeX, 1, eyeY, eyeX + ex, eyeY + ey,1, 0,0,1);
 
           //printf("eyeX = %f eyeZ = %f lx = %f lz = %f angle= %d\n",eyeX , eyeZ, atX, atZ,  angle);
            break;
@@ -1176,7 +1171,6 @@ void display()
     if(fireworks)
     {
       int i;
-      //glClear(GL_COLOR_BUFFER_BIT);
       if (step < 0.9*length) 
       {
         for (i=0; i<numPoints; i++)
@@ -1344,26 +1338,6 @@ void key(unsigned char ch,int x,int y)
    //  Reset view angle
   else if (ch == '0')
     th = ph = 0;
-  /*  
-  else if (ch == 'w' || ch == 'W')
-  {
-      eyeX += atX * fraction;
-      eyeZ +=  atZ * fraction;   
-  }
-  else if (ch == 's' || ch == 'S')
-  {
-      eyeX -= atX * fraction;
-      eyeZ -=  atZ * fraction;
-  }
-  else if (ch == 'a' || ch == 'A')
-  {
-      angle += 5;
-  } 
-  else if (ch == 'd' || ch == 'D')
-  {
-      angle -= 5;
-  }
-  */
   //  Switch display mode
   else if (ch == 'm' || ch == 'M')
   {
@@ -1482,13 +1456,11 @@ int main(int argc,char* argv[])
   texture[0] = LoadTexBMP("PlasterBare.bmp");
   texture[1] = LoadTexBMP("WoodPlanksBare.bmp");
   texture[2] = LoadTexBMP("MetalFences0065.bmp");
-  
   texture[3] = LoadTexBMP("Red_Fiberglass.bmp");
   texture[4] = LoadTexBMP("Blue_Plastic.bmp");
   texture[5] = LoadTexBMP("Green_Fiberglass.bmp");
   texture[6] = LoadTexBMP("Yellow_Fiberglass.bmp");
   texture[7] = LoadTexBMP("rope.bmp");
-  //texture[8] = LoadTexBMP("Leaves0206.bmp");
 
   //  Load park skybox texture
 
